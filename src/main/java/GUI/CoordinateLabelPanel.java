@@ -9,14 +9,11 @@
  * Class under the Intellij Idea JChessEngine project, Version 2023.2.2 (the "File"); you may edit this file and you may cannot return to
  * the current code. You may obtain a copy of the file at
  *
- * https://github.com/iasonvog8/JChessEngine/tree/master/src/main/java/classics/move/FENParser.java
+ * https://github.com/iasonvog8/JChessEngine/tree/master/src/main/java/GUI/CoordinateLabelPanel.java
  *
- * About this class:
- *
- * A class to parse FEN (Forsyth-Edwards Notation) strings and initialize the board to a given position.
  */
 
-package classics.move;
+package GUI;
 
-public class FENParser {
+public class CoordinateLabelPanel {
 }

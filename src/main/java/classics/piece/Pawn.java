@@ -1,4 +1,16 @@
 package classics.piece;
 
-public class Pawn {
+import java.util.ArrayList;
+
+public class Pawn extends Piece{
+    public Pawn(int coordinate, Alliance alliance) {
+        super(coordinate, alliance, PieceType.PAWN);
+    }
+
+    @Override
+    ArrayList<Integer> calculateLegalSquares() {
+        return null;
+    }
+
+
 }

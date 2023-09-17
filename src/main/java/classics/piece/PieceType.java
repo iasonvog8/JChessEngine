@@ -1,4 +1,28 @@
+/*
+ * Copyright 2023 iasonvog8 (https://github.com/iasonvog8)
+ *
+ * Licensed under the Intellij Idea License, Version 2023.2.2 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at
+ *
+ * https://www.jetbrains.com/idea/download/?section=windows
+ *
+ * Class under the Intellij Idea JChessEngine project, Version 2023.2.2 (the "File"); you may edit this file and you may cannot return to
+ * the current code. You may obtain a copy of the file at
+ *
+ * https://github.com/iasonvog8/JChessEngine/tree/master/src/main/java/classics/piece/PieceType.java
+ *
+ * About this class:
+ *
+ * An enum class representing the different types of chess pieces (Pawn, Rook, Knight, Bishop, Queen, King).
+ */
+
 package classics.piece;
 
-public class PieceType {
+public enum PieceType {
+    PAWN,
+    ROOK,
+    KNIGHT,
+    BISHOP,
+    QUEEN,
+    KING
 }

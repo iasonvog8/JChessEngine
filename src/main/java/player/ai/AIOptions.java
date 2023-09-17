@@ -9,14 +9,14 @@
  * Class under the Intellij Idea JChessEngine project, Version 2023.2.2 (the "File"); you may edit this file and you may cannot return to
  * the current code. You may obtain a copy of the file at
  *
- * https://github.com/iasonvog8/JChessEngine/tree/master/src/main/java/classics/move/FENParser.java
+ * https://github.com/iasonvog8/JChessEngine/tree/master/src/main/java/player/ai/AIOptions.java
  *
  * About this class:
  *
- * A class to parse FEN (Forsyth-Edwards Notation) strings and initialize the board to a given position.
+ * A class to manage and store AI-specific options, such as difficulty level, search timeout, or search depth.
  */
 
-package classics.move;
+package player.ai;
 
-public class FENParser {
+public class AIOptions {
 }
