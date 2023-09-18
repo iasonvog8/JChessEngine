@@ -36,10 +36,10 @@ public abstract class Move {
         this.destinationCoordinate = destinationCoordinate;
     }
 
-    public static class MajorMove extends Move {
-        public MajorMove(final Board board,
-                         final Piece movedPiece,
-                         final int destinationCoordinate) {
+    public static class PrimaryMove extends Move { // or MajorMove
+        public PrimaryMove(final Board board,
+                           final Piece movedPiece,
+                           final int destinationCoordinate) {
             super(board, movedPiece, destinationCoordinate);
         }
     }

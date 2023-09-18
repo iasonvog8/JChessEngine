@@ -6,7 +6,6 @@ import classics.move.Move;
 import java.util.ArrayList;
 
 import static classics.boardRepresentation.BoardUtils.*;
-import static classics.boardRepresentation.Tile.*;
 import static classics.move.Move.*;
 
 public class Knight extends Piece{
@@ -22,17 +21,17 @@ public class Knight extends Piece{
 
         for (int dir : directions) {
             destinationCoordinate = currentCoordinate + dir;
-            if (!isFirstColumnExclusive(this.currentCoordinate, dir)  &&
-                !isSecondColumnExclusive(this.currentCoordinate, dir) &&
-                !isSixthColumnExclusive(this.currentCoordinate, dir)  &&
-                !isSeventhColumnExclusive(this.currentCoordinate, dir)&&
+            if (!isFirstColumnExclusive(currentCoordinate, dir)  &&
+                !isSecondColumnExclusive(currentCoordinate, dir) &&
+                !isSixthColumnExclusive(currentCoordinate, dir)  &&
+                !isSeventhColumnExclusive(currentCoordinate, dir)&&
                 isValidTile(destinationCoordinate)) {
 
-                if (board.getChessBoard()[destinationCoordinate] instanceof EmptyTile)
-                    allPossibleLegalMoves.add(new MajorMove(board, this, destinationCoordinate));
-                if (board.getChessBoard()[destinationCoordinate] instanceof OccupiedTile) {
+                if (!board.getChessBoard()[destinationCoordinate].isTileOccupied()) // or ... instancof EmptyTile
+                    allPossibleLegalMoves.add(new PrimaryMove(board, this, destinationCoordinate));
+                if (board.getChessBoard()[destinationCoordinate].isTileOccupied()) { // or ... instancof OccupiedTile
                     if (board.getChessBoard()[destinationCoordinate].getPiece().alliance !=
-                            board.getChessBoard()[this.currentCoordinate].getPiece().alliance)
+                            board.getChessBoard()[currentCoordinate].getPiece().alliance)
                         allPossibleLegalMoves.add(new AttackMove(board, this, destinationCoordinate,
                                 board.getChessBoard()[destinationCoordinate].getPiece()));
                 }

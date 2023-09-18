@@ -1,5 +1,8 @@
 package classics.piece;
 
+import classics.boardRepresentation.Board;
+import classics.move.Move;
+
 import java.util.ArrayList;
 
 public class Pawn extends Piece{
@@ -8,7 +11,7 @@ public class Pawn extends Piece{
     }
 
     @Override
-    ArrayList<Integer> calculateLegalSquares() {
+    ArrayList<Move> calculateLegalSquares(Board board) {
         return null;
     }
 

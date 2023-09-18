@@ -49,6 +49,7 @@ public abstract class Tile {
         Piece tilePiece;
         public OccupiedTile(int coordinate, Piece tilePiece) {
             super(coordinate);
+            this.tilePiece = tilePiece;
         }
 
         @Override
