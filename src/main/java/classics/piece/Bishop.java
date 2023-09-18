@@ -14,7 +14,7 @@ public class Bishop extends Piece{
     }
 
     @Override
-    ArrayList<Move> calculateLegalSquares(Board board) {
+    public ArrayList<Move> calculateLegalSquares(Board board) {
         ArrayList<Move> allPossibleLegalMoves = new ArrayList<>();
         int destinationCoordinate;
 

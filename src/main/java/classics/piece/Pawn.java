@@ -11,7 +11,7 @@ public class Pawn extends Piece{
     }
 
     @Override
-    ArrayList<Move> calculateLegalSquares(Board board) {
+    public ArrayList<Move> calculateLegalSquares(Board board) {
         return null;
     }
 

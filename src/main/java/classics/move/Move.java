@@ -24,9 +24,9 @@ import classics.boardRepresentation.Board;
 import classics.piece.Piece;
 
 public abstract class Move {
-    final Board board;
-    final Piece movedPiece;
-    final int destinationCoordinate;
+    public final Board board;
+    public final Piece movedPiece;
+    public final int destinationCoordinate;
 
     protected Move(final Board board,
                    final Piece movedPiece,

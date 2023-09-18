@@ -33,6 +33,7 @@ public class ChessBitSet {
         bitSets.add(new ChessBitSet(new Bishop(5, Alliance.BLACK)));
         bitSets.add(new ChessBitSet(new Bishop(2, Alliance.BLACK)));
         bitSets.add(new ChessBitSet(new Queen(3, Alliance.BLACK)));
+        bitSets.add(new ChessBitSet(new King(4, Alliance.BLACK)));
 
         bitSets.add(new ChessBitSet(new Pawn(48, Alliance.WHITE)));
         bitSets.add(new ChessBitSet(new Pawn(49, Alliance.WHITE)));
@@ -49,6 +50,7 @@ public class ChessBitSet {
         bitSets.add(new ChessBitSet(new Bishop(58, Alliance.WHITE)));
         bitSets.add(new ChessBitSet(new Bishop(61, Alliance.WHITE)));
         bitSets.add(new ChessBitSet(new Queen(59, Alliance.WHITE)));
+        bitSets.add(new ChessBitSet(new King(60, Alliance.WHITE)));
 
         return bitSets;
     }

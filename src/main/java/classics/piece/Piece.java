@@ -28,8 +28,9 @@ import java.util.ArrayList;
 
 public abstract class Piece {
      public int currentCoordinate;
-     Alliance alliance;
+     public Alliance alliance;
      PieceType pieceType;
+     boolean isFirstMove;
 
      public Piece(final int currentCoordinate, final Alliance alliance, final PieceType pieceType) {
           this.currentCoordinate = currentCoordinate;
@@ -37,5 +38,11 @@ public abstract class Piece {
           this.pieceType = pieceType;
      }
 
-     abstract ArrayList<Move> calculateLegalSquares(final Board board);
+     public Piece(final int currentCoordinate, final Alliance alliance, final PieceType pieceType, boolean isFirstMove) {
+          this.currentCoordinate = currentCoordinate;
+          this.alliance = alliance;
+          this.pieceType = pieceType;
+          this.isFirstMove = isFirstMove;
+     }
+     public abstract ArrayList<Move> calculateLegalSquares(final Board board);
 }

@@ -20,6 +20,9 @@
 
 package classics.boardRepresentation;
 
+import classics.piece.Alliance;
+import classics.piece.Piece;
+
 import java.util.ArrayList;
 
 import static classics.boardRepresentation.BoardUtils.*;
@@ -39,6 +42,31 @@ public class Board {
         initBoard();
         for (ChessBitSet bit : bitSet)
             chessBoard[bit.getBit().currentCoordinate] = new OccupiedTile(bit.getBit().currentCoordinate, bit.getBit());
+    }
+    public ArrayList<Piece> getAllPieces() {
+        ArrayList<Piece> boardPieces = new ArrayList<>();
+
+        for (Tile t : chessBoard)
+            if (t.isTileOccupied()) boardPieces.add(t.getPiece());
+
+        return boardPieces;
+    }
+    public ArrayList<Piece> getAllWhitePieces() {
+        ArrayList<Piece> boardPieces = new ArrayList<>();
+
+        for (Tile t : chessBoard)
+            if (t.isTileOccupied() && t.getPiece().alliance == Alliance.WHITE) boardPieces.add(t.getPiece());
+
+        return boardPieces;
+    }
+
+    public ArrayList<Piece> getAllBlackPieces() {
+        ArrayList<Piece> boardPieces = new ArrayList<>();
+
+        for (Tile t : chessBoard)
+            if (t.isTileOccupied() && t.getPiece().alliance == Alliance.BLACK) boardPieces.add(t.getPiece());
+
+        return boardPieces;
     }
 
     public Tile[] getChessBoard() {
