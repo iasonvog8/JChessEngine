@@ -7,11 +7,9 @@ import java.util.ArrayList;
 
 import static classics.boardRepresentation.BoardUtils.*;
 import static classics.boardRepresentation.BoardUtils.isValidTile;
-import static classics.move.MoveGenerator.*;
-import static classics.piece.Alliance.*;
 
-public class King extends Piece implements KingSafety{
-    private final int[] directions = {-9, -8, -7, -1, 1, 7, 8, 9};
+public class King extends Piece {
+    private final int[] CANDIDATE_MOVE_DIRECTIONS = {-9, -8, -7, -1, 1, 7, 8, 9};
     public King(final int coordinate, final Alliance alliance) {
         super(coordinate, alliance, PieceType.KING);
     }
@@ -21,44 +19,23 @@ public class King extends Piece implements KingSafety{
         ArrayList<Move> allPossibleLegalMoves = new ArrayList<>();
         int destinationCoordinate;
 
-        for (int dir : directions) {
-            destinationCoordinate = currentCoordinate + dir;
-
-            if (isNotFirstColumnExclusive(currentCoordinate, dir)  &&
-                isNotSeventhColumnExclusive(currentCoordinate, dir)&&
+        for (int dir : CANDIDATE_MOVE_DIRECTIONS) {
+            destinationCoordinate = pieceCoordinate + dir;
+            if (isNotFirstColumnExclusive(pieceCoordinate, dir)  &&
+                isNotSeventhColumnExclusive(pieceCoordinate, dir)&&
                 isValidTile(destinationCoordinate)) {
 
-                if (!board.getChessBoard()[destinationCoordinate].isTileOccupied())
+                if (!board.getTile(destinationCoordinate).isTileOccupied())
                     allPossibleLegalMoves.add(new Move.PrimaryMove(board, this, destinationCoordinate));
-                if (board.getChessBoard()[destinationCoordinate].isTileOccupied()) {
-                    if (board.getChessBoard()[destinationCoordinate].getPiece().alliance !=
-                            board.getChessBoard()[currentCoordinate].getPiece().alliance)
+                if (board.getTile(destinationCoordinate).isTileOccupied()) {
+                    if (board.getTile(destinationCoordinate).getPiece().getAlliance() !=
+                            board.getTile(pieceCoordinate).getPiece().getAlliance())
                         allPossibleLegalMoves.add(new Move.AttackMove(board, this, destinationCoordinate,
-                                board.getChessBoard()[destinationCoordinate].getPiece()));
+                                board.getTile(destinationCoordinate).getPiece()));
                 }
             }
         }
         return allPossibleLegalMoves;
-    }
-
-    @Override
-    public boolean isOnCheck(Board board, int coordinate) {
-        ArrayList<Move> opponentMoves = alliance == WHITE ? generateAllBlackPossibleMoves(board) : generateAllWhitePossibleMoves(board);
-
-        for (Move move : opponentMoves)
-            if (move.destinationCoordinate == coordinate) return true;
-
-        return false;
-    }
-
-    @Override
-    public boolean isThereBlockers(int checkCoordinate) {
-        return false;
-    }
-
-    @Override
-    public ArrayList<Move> calculateEscapeMoves(Board board, int kingLocation) {
-        return null;
     }
 
     private boolean isNotFirstColumnExclusive(int currentPosition, int direction) {

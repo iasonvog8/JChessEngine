@@ -43,6 +43,12 @@ public class Board {
         for (ChessBitSet bit : bitSet)
             chessBoard[bit.getBit().currentCoordinate] = new OccupiedTile(bit.getBit().currentCoordinate, bit.getBit());
     }
+    public Tile getTile(int tileCoordinate) {
+        return chessBoard[tileCoordinate];
+    }
+    public void setTile(int tileCoordinate, Tile tile) {
+        chessBoard[tileCoordinate] = tile;
+    }
     public ArrayList<Piece> getAllPieces() {
         ArrayList<Piece> boardPieces = new ArrayList<>();
 
@@ -55,7 +61,7 @@ public class Board {
         ArrayList<Piece> boardPieces = new ArrayList<>();
 
         for (Tile t : chessBoard)
-            if (t.isTileOccupied() && t.getPiece().alliance == Alliance.WHITE) boardPieces.add(t.getPiece());
+            if (t.isTileOccupied() && t.getPiece().getAlliance() == Alliance.WHITE) boardPieces.add(t.getPiece());
 
         return boardPieces;
     }
@@ -64,7 +70,7 @@ public class Board {
         ArrayList<Piece> boardPieces = new ArrayList<>();
 
         for (Tile t : chessBoard)
-            if (t.isTileOccupied() && t.getPiece().alliance == Alliance.BLACK) boardPieces.add(t.getPiece());
+            if (t.isTileOccupied() && t.getPiece().getAlliance() == Alliance.BLACK) boardPieces.add(t.getPiece());
 
         return boardPieces;
     }

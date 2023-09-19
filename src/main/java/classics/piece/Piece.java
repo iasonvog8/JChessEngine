@@ -27,22 +27,41 @@ import classics.move.Move;
 import java.util.ArrayList;
 
 public abstract class Piece {
-     public int currentCoordinate;
-     public Alliance alliance;
-     PieceType pieceType;
-     boolean isFirstMove;
+     protected int pieceCoordinate;
+     private Alliance alliance;
+     private PieceType pieceType;
+     private boolean isFirstMove;
 
-     public Piece(final int currentCoordinate, final Alliance alliance, final PieceType pieceType) {
-          this.currentCoordinate = currentCoordinate;
+     public Piece(final int pieceCoordinate, final Alliance alliance, final PieceType pieceType) {
+          this.pieceCoordinate = pieceCoordinate;
           this.alliance = alliance;
           this.pieceType = pieceType;
+          this.isFirstMove = true;
      }
 
-     public Piece(final int currentCoordinate, final Alliance alliance, final PieceType pieceType, boolean isFirstMove) {
-          this.currentCoordinate = currentCoordinate;
-          this.alliance = alliance;
-          this.pieceType = pieceType;
-          this.isFirstMove = isFirstMove;
-     }
      public abstract ArrayList<Move> calculateLegalSquares(final Board board);
+
+     public Alliance getAlliance() {
+          return alliance;
+     }
+
+     public void setAlliance(Alliance alliance) {
+          this.alliance = alliance;
+     }
+
+     public PieceType getPieceType() {
+          return pieceType;
+     }
+
+     public void setPieceType(PieceType pieceType) {
+          this.pieceType = pieceType;
+     }
+
+     public boolean isFirstMove() {
+          return isFirstMove;
+     }
+
+     public void setFirstMove(boolean firstMove) {
+          isFirstMove = firstMove;
+     }
 }

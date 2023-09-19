@@ -8,7 +8,7 @@ import classics.move.Move;
 import java.util.ArrayList;
 
 public class Rook extends Piece{
-    private final int[] directions = {-8, -1, 1, 8};
+    private final int[] CANDIDATE_MOVE_DIRECTIONS = {-8, -1, 1, 8};
     public Rook(final int coordinate, final Alliance alliance) {
         super(coordinate, alliance, PieceType.ROOK);
     }
@@ -18,20 +18,20 @@ public class Rook extends Piece{
         ArrayList<Move> allPossibleLegalMoves = new ArrayList<>();
         int destinationCoordinate;
 
-        for (int dir : directions) {
-            destinationCoordinate = currentCoordinate + dir;
+        for (int dir : CANDIDATE_MOVE_DIRECTIONS) {
+            destinationCoordinate = pieceCoordinate + dir;
 
-            if (isNotFirstColumnExclusive(currentCoordinate, dir) &&
-                    isNotSeventhColumnExclusive(currentCoordinate, dir) &&
-                isValidTile(currentCoordinate)) {
+            if (isNotFirstColumnExclusive(pieceCoordinate, dir) &&
+                    isNotSeventhColumnExclusive(pieceCoordinate, dir) &&
+                isValidTile(pieceCoordinate)) {
                 do {
-                    if (!board.getChessBoard()[destinationCoordinate].isTileOccupied())
+                    if (!board.getTile(destinationCoordinate).isTileOccupied())
                         allPossibleLegalMoves.add(new PrimaryMove(board, this, destinationCoordinate));
-                    if (board.getChessBoard()[destinationCoordinate].isTileOccupied()) {
-                        if (board.getChessBoard()[destinationCoordinate].getPiece().alliance !=
-                                board.getChessBoard()[currentCoordinate].getPiece().alliance) {
+                    if (board.getTile(destinationCoordinate).isTileOccupied()) {
+                        if (board.getTile(destinationCoordinate).getPiece().getAlliance() !=
+                                board.getTile(pieceCoordinate).getPiece().getAlliance()) {
                             allPossibleLegalMoves.add(new AttackMove(board, this, destinationCoordinate,
-                                    board.getChessBoard()[destinationCoordinate].getPiece()));
+                                    board.getTile(destinationCoordinate).getPiece()));
                             break;
                         }
                     }
@@ -44,10 +44,10 @@ public class Rook extends Piece{
         return allPossibleLegalMoves;
     }
 
-    private boolean isNotFirstColumnExclusive(int currentPosition, int direction) {
+    private boolean isNotFirstColumnExclusive(final int currentPosition, final int direction) {
         return (!FIRST_COLUMN[currentPosition] || direction != -1);
     }
-    private boolean isNotSeventhColumnExclusive(int currentPosition, int direction) {
+    private boolean isNotSeventhColumnExclusive(final int currentPosition, final int direction) {
         return (!SEVENTH_COLUMN[currentPosition] || direction != 1);
     }
 }

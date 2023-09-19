@@ -19,6 +19,35 @@
 package classics.piece;
 
 public enum Alliance {
-    BLACK,
-    WHITE
+    BLACK{
+        @Override
+        public verticalDirection getVerticalDirection() {
+            return verticalDirection.DOWN;
+        }
+    },
+    WHITE {
+        @Override
+        public verticalDirection getVerticalDirection() {
+            return verticalDirection.UP;
+        }
+    };
+
+    public abstract verticalDirection getVerticalDirection();
+    protected enum verticalDirection {
+        DOWN {
+            @Override
+            public int getDirectionOffSet() {
+                return 1;
+            }
+        },
+        UP {
+            @Override
+            public int getDirectionOffSet() {
+                return -1;
+            }
+        };
+
+        public abstract int getDirectionOffSet();
+    }
 }
+
