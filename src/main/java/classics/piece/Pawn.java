@@ -43,9 +43,10 @@ public class Pawn extends Piece{
             else if ((directionOffSet * verticalDirectionOffSet == -7 || directionOffSet * verticalDirectionOffSet == 9) &&
                     isValidTile(destinationCoordinate) && !SEVENTH_COLUMN[pieceCoordinate]) {
                 if (board.getTile(destinationCoordinate).isTileOccupied() && board.getTile(destinationCoordinate).getPiece().getAlliance() !=
-                        board.getTile(pieceCoordinate).getPiece().getAlliance())
+                        board.getTile(pieceCoordinate).getPiece().getAlliance()) {
                     allPossibleLegalMoves.add(new AttackMove(board, this, destinationCoordinate,
                             board.getTile(destinationCoordinate).getPiece()));
+                }
             }
         }
 

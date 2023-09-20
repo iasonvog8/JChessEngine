@@ -23,17 +23,16 @@ public class Bishop extends Piece{
 
             if (isNotFirstColumnExclusive(pieceCoordinate, dir) &&
                     isNotSeventhColumnExclusive(pieceCoordinate, dir) &&
-                    isValidTile(pieceCoordinate)) {
+                    isValidTile(destinationCoordinate)) {
                 do {
                     if (!board.getTile(destinationCoordinate).isTileOccupied())
                         allPossibleLegalMoves.add(new Move.PrimaryMove(board, this, destinationCoordinate));
                     if (board.getTile(destinationCoordinate).isTileOccupied()) {
                         if (board.getTile(destinationCoordinate).getPiece().getAlliance() !=
-                                board.getTile(pieceCoordinate).getPiece().getAlliance()) {
+                                board.getTile(pieceCoordinate).getPiece().getAlliance())
                             allPossibleLegalMoves.add(new Move.AttackMove(board, this, destinationCoordinate,
                                     board.getTile(destinationCoordinate).getPiece()));
-                            break;
-                        }
+                        break;
                     }
                 } while (isNotFirstColumnExclusive(destinationCoordinate, dir) &&
                         isNotSeventhColumnExclusive(destinationCoordinate, dir) &&

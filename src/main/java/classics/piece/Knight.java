@@ -21,15 +21,20 @@ public class Knight extends Piece{
 
         for (int dir : CANDIDATE_MOVE_DIRECTIONS) {
             destinationCoordinate = pieceCoordinate + dir;
+            System.out.println(destinationCoordinate + " " + dir + " " + pieceCoordinate);
+            System.out.println(!isFirstColumnExclusive(pieceCoordinate, dir));
+
             if (!isFirstColumnExclusive(pieceCoordinate, dir)  &&
                 !isSecondColumnExclusive(pieceCoordinate, dir) &&
                 !isSixthColumnExclusive(pieceCoordinate, dir)  &&
                 !isSeventhColumnExclusive(pieceCoordinate, dir)&&
                 isValidTile(destinationCoordinate)) {
-
-                if (!board.getTile(destinationCoordinate).isTileOccupied()) // or ... instancof EmptyTile
+                System.out.println(destinationCoordinate);
+                if (!board.getTile(destinationCoordinate).isTileOccupied()) {// or ... instanceof EmptyTile
                     allPossibleLegalMoves.add(new PrimaryMove(board, this, destinationCoordinate));
-                if (board.getTile(destinationCoordinate).isTileOccupied()) { // or ... instancof OccupiedTile
+                    System.out.println("AKDJAGD");
+                    //TODO 2
+                }if (board.getTile(destinationCoordinate).isTileOccupied()) { // or ... instanceof OccupiedTile
                     if (board.getTile(destinationCoordinate).getPiece().getAlliance() !=
                             board.getTile(pieceCoordinate).getPiece().getAlliance())
                         allPossibleLegalMoves.add(new AttackMove(board, this, destinationCoordinate,
@@ -37,10 +42,14 @@ public class Knight extends Piece{
                 }
             }
         }
+        for (Move m : allPossibleLegalMoves)
+            System.out.println(m.toString());
         return allPossibleLegalMoves;
     }
 
     private boolean isFirstColumnExclusive(final int currentPosition, final int direction) {
+        System.out.println(FIRST_COLUMN[currentPosition] && direction == -17 || direction == -10 ||
+                direction == 6 || direction == 15);
         return (FIRST_COLUMN[currentPosition] && direction == -17 || direction == -10 ||
                 direction == 6 || direction == 15);
     }

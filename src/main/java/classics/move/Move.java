@@ -46,6 +46,12 @@ public abstract class Move {
                            final int destinationCoordinate) {
             super(board, movedPiece, destinationCoordinate);
         }
+
+        @Override
+        public String toString() {
+            return "Moved piece: " + movedPiece.getPieceType() + " Current coordinate: " + movedPiece.getPieceCoordinate() +
+                    " Destination coordinate: " + destinationCoordinate;
+        }
     }
 
     public static class AttackMove extends Move {
