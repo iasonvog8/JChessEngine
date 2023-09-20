@@ -44,9 +44,9 @@ public class Queen extends Piece{
     }
 
     private boolean isNotFirstColumnExclusive(final int currentPosition, final int direction) {
-        return (!FIRST_COLUMN[currentPosition] || direction != -9 && direction != 7 && direction != -1);
+        return (!FIRST_COLUMN[currentPosition] && (direction != -9 && direction != 7) || direction != -1);
     }
     private boolean isNotSeventhColumnExclusive(final int currentPosition, final int direction) {
-        return (!SEVENTH_COLUMN[currentPosition] || direction != 9 && direction != -7 && direction != 1);
+        return (!SEVENTH_COLUMN[currentPosition] && (direction != 9 && direction != -7) || direction != 1);
     }
 }
