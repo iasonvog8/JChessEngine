@@ -7,8 +7,9 @@ import java.util.ArrayList;
 
 public interface KingSafety {
 
-     boolean isOnCheck(Board board, int coordinate);
+     boolean isOnCheck(final Move kingMoveTest);
 
-     boolean isThereBlockers(int checkCoordinate);
-     ArrayList<Move> calculateEscapeMoves(Board board, int kingLocation);
+     boolean isThereBlockers(final int checkCoordinate);
+     boolean hasEscapeMoves();
+     boolean isDone(final Board board);
 }

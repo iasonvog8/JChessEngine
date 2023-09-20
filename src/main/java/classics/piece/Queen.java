@@ -19,17 +19,17 @@ public class Queen extends Piece{
         int destinationCoordinate;
 
         for (int dir : CANDIDATE_MOVE_DIRECTIONS) {
-            destinationCoordinate = currentCoordinate + dir;
+            destinationCoordinate = pieceCoordinate + dir;
 
-            if (isNotFirstColumnExclusive(currentCoordinate, dir) &&
-                    isNotSeventhColumnExclusive(currentCoordinate, dir) &&
-                    isValidTile(currentCoordinate)) {
+            if (isNotFirstColumnExclusive(pieceCoordinate, dir) &&
+                    isNotSeventhColumnExclusive(pieceCoordinate, dir) &&
+                    isValidTile(pieceCoordinate)) {
                 do {
                     if (!board.getTile(destinationCoordinate).isTileOccupied())
                         allPossibleLegalMoves.add(new Move.PrimaryMove(board, this, destinationCoordinate));
                     if (board.getTile(destinationCoordinate).isTileOccupied()) {
                         if (board.getTile(destinationCoordinate).getPiece().getAlliance() !=
-                                board.getTile(currentCoordinate).getPiece().getAlliance()) {
+                                board.getTile(pieceCoordinate).getPiece().getAlliance()) {
                             allPossibleLegalMoves.add(new Move.AttackMove(board, this, destinationCoordinate,
                                     board.getTile(destinationCoordinate).getPiece()));
                             break;

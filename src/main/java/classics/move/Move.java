@@ -20,8 +20,13 @@
 
 package classics.move;
 
+import static classics.move.MoveGenerator.*;
 import classics.boardRepresentation.Board;
+import classics.piece.Alliance;
+import classics.piece.KingSafety;
 import classics.piece.Piece;
+
+import java.util.ArrayList;
 
 public abstract class Move {
     public final Board board;
@@ -35,7 +40,6 @@ public abstract class Move {
         this.movedPiece = movedPiece;
         this.destinationCoordinate = destinationCoordinate;
     }
-
     public static class PrimaryMove extends Move { // or MajorMove
         public PrimaryMove(final Board board,
                            final Piece movedPiece,
@@ -53,6 +57,55 @@ public abstract class Move {
                           final Piece attackedPiece) {
             super(board, movedPiece, destinationCoordinate);
             this.attackedPiece = attackedPiece;
+        }
+    }
+    private static class TransitionMove implements KingSafety {
+        protected Board currentBoard;
+        protected Board transitionBoard;
+        protected Move kingMove;
+
+        public TransitionMove(final Move kingMove) {
+            this.currentBoard = kingMove.board;
+            this.kingMove = kingMove;
+            this.transitionBoard = currentBoard.clone();
+        }
+        public void createMove(final Move transitionMove) {
+            transitionBoard.setMove(transitionMove);
+        }
+
+        @Override
+        public boolean isOnCheck(final Move transitionMove) {
+            ArrayList<Move> allPossibleOpponentMoves = transitionMove.movedPiece.getAlliance() == Alliance.WHITE ?
+                generateAllBlackPossibleMoves(transitionBoard) : generateAllWhitePossibleMoves(transitionBoard);
+
+            for (Move attackerMove : allPossibleOpponentMoves)
+                if (attackerMove.destinationCoordinate == transitionMove.destinationCoordinate)
+                    return true;
+            return false;
+        }
+
+        @Override
+        public boolean isThereBlockers(final int checkCoordinate) {
+            return false;
+        }
+
+        @Override
+        public boolean hasEscapeMoves() {
+            Piece king = kingMove.movedPiece;
+            ArrayList<Move> allKingPossibleMoves = king.calculateLegalSquares(currentBoard);
+
+            for (Move kingMove : allKingPossibleMoves) {
+                transitionBoard = currentBoard.clone();
+                createMove(kingMove);
+                if (!isOnCheck(kingMove)) return true;
+            }
+
+            return false;
+        }
+
+        @Override
+        public boolean isDone(final Board board) {
+            return false;
         }
     }
 }

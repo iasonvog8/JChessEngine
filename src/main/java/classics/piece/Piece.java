@@ -40,7 +40,9 @@ public abstract class Piece {
      }
 
      public abstract ArrayList<Move> calculateLegalSquares(final Board board);
-
+     public int getPieceCoordinate() {
+          return pieceCoordinate;
+     }
      public Alliance getAlliance() {
           return alliance;
      }

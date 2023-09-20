@@ -19,5 +19,8 @@
 
 package classics.game;
 
-public class GameResult {
+public enum GameResult {
+    DRAWN,
+    CHECK,
+    CHECKMATE
 }

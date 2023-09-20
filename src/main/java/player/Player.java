@@ -18,5 +18,14 @@
 
 package player;
 
-public class Player {
+public abstract class Player {
+    String name;
+    int level;
+
+    public Player(String name, int level) {
+        this.name = name;
+        this.level = level;
+    }
+
+    abstract boolean isWhitePlayer();
 }

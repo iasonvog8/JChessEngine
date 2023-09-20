@@ -20,5 +20,32 @@
 
 package classics.boardRepresentation;
 
+import classics.move.Move;
+import classics.move.MoveValidator;
+import player.BlackPlayer;
+import player.WhitePlayer;
+
 public class Position {
+    boolean isWhiteTurn;
+    final WhitePlayer whitePlayer;
+    final BlackPlayer blackPlayer;
+    final Board board;
+
+    public Position(final WhitePlayer whitePlayer, final BlackPlayer blackPlayer, final Board board) {
+        this.isWhiteTurn = true;
+        this.whitePlayer = whitePlayer;
+        this.blackPlayer = blackPlayer;
+        this.board = board;
+    }
+
+    public void changeTurn() {
+        isWhiteTurn = !isWhiteTurn;
+    }
+
+    public void execute(Move move) {
+        if (isWhiteTurn && MoveValidator.isValidMove(move, whitePlayer.isWhitePlayer(), board))
+            board.setMove(move);
+        else if (!isWhiteTurn && MoveValidator.isValidMove(move, blackPlayer.isWhitePlayer(), board))
+                board.setMove(move);
+    }
 }

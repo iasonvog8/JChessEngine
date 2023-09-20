@@ -20,5 +20,16 @@
 
 package classics.move;
 
+import classics.boardRepresentation.Board;
+
+import java.util.ArrayList;
+
 public class MoveValidator {
+    public static boolean isValidMove(final Move playerMove,
+                                      final boolean isWhitePlayer,
+                                      final Board board) {
+        ArrayList<Move> allPossiblePlayerMove = isWhitePlayer ? MoveGenerator.generateAllWhitePossibleMoves(board) :
+                                                                MoveGenerator.generateAllBlackPossibleMoves(board);
+        return allPossiblePlayerMove.contains(playerMove);
+    }
 }

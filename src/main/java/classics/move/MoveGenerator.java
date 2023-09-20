@@ -27,17 +27,17 @@ import java.util.ArrayList;
 public class MoveGenerator {
     private static final ArrayList<Move> generateMoves = new ArrayList<>();
 
-    public static ArrayList<Move> generateAllPossibleMoves(Board board) {
+    public static ArrayList<Move> generateAllPossibleMoves(final Board board) {
         for (Piece piece : board.getAllPieces())
             generateMoves.addAll(piece.calculateLegalSquares(board));
         return generateMoves;
     }
-    public static ArrayList<Move> generateAllBlackPossibleMoves(Board board) {
+    public static ArrayList<Move> generateAllBlackPossibleMoves(final Board board) {
         for (Piece piece : board.getAllBlackPieces())
             generateMoves.addAll(piece.calculateLegalSquares(board));
         return generateMoves;
     }
-    public static ArrayList<Move> generateAllWhitePossibleMoves(Board board) {
+    public static ArrayList<Move> generateAllWhitePossibleMoves(final Board board) {
         for (Piece piece : board.getAllWhitePieces())
             generateMoves.addAll(piece.calculateLegalSquares(board));
         return generateMoves;
