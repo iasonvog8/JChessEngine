@@ -71,13 +71,11 @@ public abstract class Move {
                     " Destination coordinate: " + destinationCoordinate + " Attacked Piece: " + attackedPiece;
         }
     }
-    public static class UndoMove extends Move {
+    public static class RevokeMove extends Move {
         public final Piece undoAttackedPiece;
-        public UndoMove(final Board board,
-                        final Piece movedPiece,
-                        final int destinationCoordinate,
-                        final Piece undoAttackedPiece) {
-            super(board, movedPiece, destinationCoordinate);
+        public RevokeMove(final Move revokeMove,
+                          final Piece undoAttackedPiece) {
+            super(revokeMove.board, revokeMove.movedPiece, revokeMove.destinationCoordinate);
             this.undoAttackedPiece = undoAttackedPiece;
         }
 
@@ -97,13 +95,13 @@ public abstract class Move {
             transitionBoard.setMove(createMove);
         }
 
-        public void undoMove(final Move undoMove) {
+        public void revokeMove(final Move undoMove) {
             Move reverseMove;
 
             if (undoMove instanceof PrimaryMove)
-                reverseMove = new UndoMove(transitionBoard, undoMove.movedPiece, undoMove.destinationCoordinate, null);
+                reverseMove = new RevokeMove(undoMove, null);
             else if (undoMove instanceof AttackMove)
-                reverseMove = new UndoMove(transitionBoard, undoMove.movedPiece, undoMove.destinationCoordinate, ((AttackMove) undoMove).attackedPiece);
+                reverseMove = new RevokeMove(undoMove, ((AttackMove) undoMove).attackedPiece);
 
             else reverseMove = null;
             assert reverseMove != null;
@@ -119,11 +117,11 @@ public abstract class Move {
 
             for (Move attackerMove : allPossibleOpponentMoves) {
                 if (attackerMove.destinationCoordinate == kingMove.destinationCoordinate) {
-                    undoMove(kingMove);
+                    revokeMove(kingMove);
                     return true;
                 }
             }
-            undoMove(kingMove);
+            revokeMove(kingMove);
             return false;
         }
 

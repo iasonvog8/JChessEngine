@@ -62,14 +62,14 @@ public class Board {
             if (move instanceof AttackMove)
                 chessBoardPieces.remove(((AttackMove) move).attackedPiece.getPieceCoordinate());
 
-        }else if (move instanceof UndoMove) {
-            if (((UndoMove) move).undoAttackedPiece != null) {
-                int undoLocation = ((UndoMove) move).undoAttackedPiece.getPieceCoordinate();
+        }else if (move instanceof RevokeMove) {
+            if (((RevokeMove) move).undoAttackedPiece != null) {
+                int undoLocation = ((RevokeMove) move).undoAttackedPiece.getPieceCoordinate();
                 int movedPieceLocation = move.movedPiece.getPieceCoordinate();
 
-                setTile(undoLocation, new OccupiedTile(undoLocation, ((UndoMove) move).undoAttackedPiece));
+                setTile(undoLocation, new OccupiedTile(undoLocation, ((RevokeMove) move).undoAttackedPiece));
                 setTile(movedPieceLocation, new OccupiedTile(movedPieceLocation, move.movedPiece));
-                chessBoardPieces.put(undoLocation, ((UndoMove) move).undoAttackedPiece);
+                chessBoardPieces.put(undoLocation, ((RevokeMove) move).undoAttackedPiece);
                 chessBoardPieces.put(movedPieceLocation, move.movedPiece);
             }
             else {
