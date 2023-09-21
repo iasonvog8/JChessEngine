@@ -6,6 +6,7 @@ import classics.move.Move;
 import java.util.ArrayList;
 
 import static classics.boardRepresentation.BoardUtils.*;
+import static classics.move.Move.*;
 
 public class Bishop extends Piece{
     private final int[] CANDIDATE_DIRECTIONS = {-9, -7, 7, 9};
@@ -19,27 +20,25 @@ public class Bishop extends Piece{
         int destinationCoordinate;
 
         for (int dir : CANDIDATE_DIRECTIONS) {
-            destinationCoordinate = pieceCoordinate + dir;
+            destinationCoordinate = pieceCoordinate;
 
-            if (isNotFirstColumnExclusive(pieceCoordinate, dir) &&
-                    isNotSeventhColumnExclusive(pieceCoordinate, dir) &&
-                    isValidTile(destinationCoordinate)) {
-                do {
-                    if (!board.getTile(destinationCoordinate).isTileOccupied())
-                        allPossibleLegalMoves.add(new Move.PrimaryMove(board, this, destinationCoordinate));
-                    if (board.getTile(destinationCoordinate).isTileOccupied()) {
-                        if (board.getTile(destinationCoordinate).getPiece().getAlliance() !=
-                                board.getTile(pieceCoordinate).getPiece().getAlliance())
-                            allPossibleLegalMoves.add(new Move.AttackMove(board, this, destinationCoordinate,
-                                    board.getTile(destinationCoordinate).getPiece()));
-                        break;
-                    }
-                } while (isNotFirstColumnExclusive(destinationCoordinate, dir) &&
-                        isNotSeventhColumnExclusive(destinationCoordinate, dir) &&
-                        isValidTile(destinationCoordinate));
+           while (isNotFirstColumnExclusive(destinationCoordinate, dir) &&
+                    isNotSeventhColumnExclusive(destinationCoordinate, dir)) {
+
+               destinationCoordinate += dir;
+               if (!isValidTile(destinationCoordinate))
+                   break;
+               if (!board.getTile(destinationCoordinate).isTileOccupied())
+                    allPossibleLegalMoves.add(new PrimaryMove(board, this, destinationCoordinate));
+               if (board.getTile(destinationCoordinate).isTileOccupied()) {
+                    if (board.getTile(destinationCoordinate).getPiece().getAlliance() !=
+                        board.getTile(pieceCoordinate).getPiece().getAlliance())
+                        allPossibleLegalMoves.add(new AttackMove(board, this, destinationCoordinate,
+                            board.getTile(destinationCoordinate).getPiece()));
+                    break;
+                }
             }
         }
-
         return allPossibleLegalMoves;
     }
 
