@@ -26,16 +26,26 @@ public class King extends Piece {
                 isNotSeventhColumnExclusive(pieceCoordinate, dir)&&
                 isValidTile(destinationCoordinate)) {
 
-                if (!board.getTile(destinationCoordinate).isTileOccupied())
-                    allPossibleLegalMoves.add(new PrimaryMove(board, this, destinationCoordinate));
-                if (board.getTile(destinationCoordinate).isTileOccupied()) {
+                if (!board.getTile(destinationCoordinate).isTileOccupied()) {
+                    TransitionMove transitionMove = new TransitionMove(board);
+
+                    if (!transitionMove.isOnCheck(new PrimaryMove(board, this, destinationCoordinate)))
+                        allPossibleLegalMoves.add(new PrimaryMove(board, this, destinationCoordinate));
+
+                } if (board.getTile(destinationCoordinate).isTileOccupied()) {
                     if (board.getTile(destinationCoordinate).getPiece().getAlliance() !=
-                            board.getTile(pieceCoordinate).getPiece().getAlliance())
-                        allPossibleLegalMoves.add(new AttackMove(board, this, destinationCoordinate,
+                            board.getTile(pieceCoordinate).getPiece().getAlliance()) {
+                        TransitionMove transitionMove = new TransitionMove(board);
+
+                        if (!transitionMove.isOnCheck(new AttackMove(board, this, destinationCoordinate,
+                                board.getTile(destinationCoordinate).getPiece())))
+                            allPossibleLegalMoves.add(new AttackMove(board, this, destinationCoordinate,
                                 board.getTile(destinationCoordinate).getPiece()));
+                    }
                 }
             }
         }
+
         return allPossibleLegalMoves;
     }
 

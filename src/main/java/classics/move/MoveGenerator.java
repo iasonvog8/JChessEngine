@@ -25,21 +25,30 @@ import classics.piece.Piece;
 import java.util.ArrayList;
 
 public class MoveGenerator {
-    private static final ArrayList<Move> generateMoves = new ArrayList<>();
+    //private static final ArrayList<Move> generateMoves = new ArrayList<>();
 
     public static ArrayList<Move> generateAllPossibleMoves(final Board board) {
+        ArrayList<Move> generateMoves = new ArrayList<>();
+
         for (Piece piece : board.getAllPieces())
             generateMoves.addAll(piece.calculateLegalSquares(board));
+
         return generateMoves;
     }
     public static ArrayList<Move> generateAllBlackPossibleMoves(final Board board) {
+        ArrayList<Move> generateMoves = new ArrayList<>();
+
         for (Piece piece : board.getAllBlackPieces())
             generateMoves.addAll(piece.calculateLegalSquares(board));
+
         return generateMoves;
     }
     public static ArrayList<Move> generateAllWhitePossibleMoves(final Board board) {
+        ArrayList<Move> generateMoves = new ArrayList<>();
+
         for (Piece piece : board.getAllWhitePieces())
             generateMoves.addAll(piece.calculateLegalSquares(board));
+
         return generateMoves;
     }
 }

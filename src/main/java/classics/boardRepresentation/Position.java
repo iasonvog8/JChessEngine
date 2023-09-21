@@ -20,32 +20,28 @@
 
 package classics.boardRepresentation;
 
-import classics.move.Move;
-import classics.move.MoveValidator;
-import player.BlackPlayer;
-import player.WhitePlayer;
-
 public class Position {
-    boolean isWhiteTurn;
-    final WhitePlayer whitePlayer;
-    final BlackPlayer blackPlayer;
-    final Board board;
+    protected boolean isWhiteTurn;
+    protected boolean attack;
+    protected boolean kingSideCastling;
+    protected boolean queenSideCastling;
+    protected int enPassantTarget;
+    protected int halfMove;
+    protected int fullMove;
 
-    public Position(final WhitePlayer whitePlayer, final BlackPlayer blackPlayer, final Board board) {
-        this.isWhiteTurn = true;
-        this.whitePlayer = whitePlayer;
-        this.blackPlayer = blackPlayer;
-        this.board = board;
+    public Position(final boolean isWhiteTurn,
+                    final boolean attack,
+                    final boolean kingSideCastling,
+                    final boolean queenSideCastling,
+                    final int enPassantTarget,
+                    final int halfMove, final int fullMove) {
+        this.isWhiteTurn = isWhiteTurn;
+        this.attack = attack;
+        this.kingSideCastling = kingSideCastling;
+        this.queenSideCastling = queenSideCastling;
+        this.enPassantTarget = enPassantTarget;
+        this.halfMove = halfMove;
+        this.fullMove = fullMove;
     }
 
-    public void changeTurn() {
-        isWhiteTurn = !isWhiteTurn;
-    }
-
-    public void execute(Move move) {
-        if (isWhiteTurn && MoveValidator.isValidMove(move, whitePlayer.isWhitePlayer(), board))
-            board.setMove(move);
-        else if (!isWhiteTurn && MoveValidator.isValidMove(move, blackPlayer.isWhitePlayer(), board))
-                board.setMove(move);
-    }
 }

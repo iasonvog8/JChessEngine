@@ -66,4 +66,10 @@ public abstract class Piece {
      public void setFirstMove(boolean firstMove) {
           isFirstMove = firstMove;
      }
+
+     @Override
+     public String toString() {
+          return "Piece Location: " + pieceCoordinate + " Alliance: " + alliance +
+                  " PieceType: " + pieceType;
+     }
 }

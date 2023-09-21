@@ -30,8 +30,9 @@ import java.util.HashMap;
 
 import static classics.boardRepresentation.BoardUtils.*;
 import static classics.boardRepresentation.Tile.*;
+import static classics.move.Move.*;
 
-public class Board implements Cloneable{
+public class Board {
     private Tile[] chessBoard;
     private final HashMap<Integer, Piece> chessBoardPieces = new HashMap<>();
     public Board() {
@@ -50,12 +51,36 @@ public class Board implements Cloneable{
         }
     }
     public void setMove(final Move move) {
-        int locationCoordinate = move.movedPiece.getPieceCoordinate();
+        if (move instanceof PrimaryMove || move instanceof AttackMove) {
+            int locationCoordinate = move.movedPiece.getPieceCoordinate();
 
-        setTile(locationCoordinate, new EmptyTile(locationCoordinate));
-        setTile(move.destinationCoordinate, new OccupiedTile(move.destinationCoordinate, move.movedPiece));
-        chessBoardPieces.remove(locationCoordinate);
-        chessBoardPieces.put(move.destinationCoordinate, move.movedPiece);
+            setTile(locationCoordinate, new EmptyTile(locationCoordinate));
+            setTile(move.destinationCoordinate, new OccupiedTile(move.destinationCoordinate, move.movedPiece));
+            chessBoardPieces.remove(locationCoordinate);
+            chessBoardPieces.put(move.destinationCoordinate, move.movedPiece);
+
+            if (move instanceof AttackMove)
+                chessBoardPieces.remove(((AttackMove) move).attackedPiece.getPieceCoordinate());
+
+        }else if (move instanceof UndoMove) {
+            if (((UndoMove) move).undoAttackedPiece != null) {
+                int undoLocation = ((UndoMove) move).undoAttackedPiece.getPieceCoordinate();
+                int movedPieceLocation = move.movedPiece.getPieceCoordinate();
+
+                setTile(undoLocation, new OccupiedTile(undoLocation, ((UndoMove) move).undoAttackedPiece));
+                setTile(movedPieceLocation, new OccupiedTile(movedPieceLocation, move.movedPiece));
+                chessBoardPieces.put(undoLocation, ((UndoMove) move).undoAttackedPiece);
+                chessBoardPieces.put(movedPieceLocation, move.movedPiece);
+            }
+            else {
+                int movedPieceLocation = move.movedPiece.getPieceCoordinate();
+
+                setTile(move.destinationCoordinate, new EmptyTile(move.destinationCoordinate));
+                setTile(movedPieceLocation, new OccupiedTile(movedPieceLocation, move.movedPiece));
+                chessBoardPieces.remove(move.destinationCoordinate);
+                chessBoardPieces.put(movedPieceLocation, move.movedPiece);
+            }
+        }
     }
     public Tile getTile(final int tileCoordinate) {
         return chessBoard[tileCoordinate];
@@ -91,32 +116,32 @@ public class Board implements Cloneable{
 
     public void setChessBoard(final Tile[] chessBoard) {
         this.chessBoard = chessBoard;
+        chessBoardPieces.clear();
+        for (Tile square : chessBoard)
+            if (square instanceof OccupiedTile)
+                chessBoardPieces.put(square.coordinate, square.getPiece());
     }
     public void displayBoard() {
         for (int sq = 0; sq < BOARD_LENGTH; sq++) {
             if (sq % 8 == 0) {
-                System.out.println("\n" + "+-".repeat(8) + "+");
+                System.out.println("\n" + "+--".repeat(8) + "+");
                 System.out.print("|");
             }
             if (chessBoard[sq] instanceof OccupiedTile) {
                 switch (chessBoard[sq].getPiece().getPieceType()) {
-                    case KING -> System.out.print("k|");
-                    case QUEEN -> System.out.print("q|");
-                    case KNIGHT -> System.out.print("n|");
-                    case BISHOP -> System.out.print("b|");
-                    case ROOK -> System.out.print("r|");
-                    case PAWN -> System.out.print("p|");
+                    case KING -> System.out.print("k");
+                    case QUEEN -> System.out.print("q");
+                    case KNIGHT -> System.out.print("n");
+                    case BISHOP -> System.out.print("b");
+                    case ROOK -> System.out.print("r");
+                    case PAWN -> System.out.print("p");
                 }
-            }else System.out.print(" |");
+                switch (chessBoard[sq].getPiece().getAlliance()) {
+                    case WHITE -> System.out.print("w|");
+                    case BLACK -> System.out.print("b|");
+                }
+            }else System.out.print("  |");
         }
-        System.out.println("\n" + "+-".repeat(8) + "+");
-    }
-    @Override
-    public Board clone() {
-        try {
-            return (Board) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError(); // This should never happen
-        }
+        System.out.println("\n" + "+--".repeat(8) + "+");
     }
 }

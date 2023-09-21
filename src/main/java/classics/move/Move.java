@@ -55,7 +55,7 @@ public abstract class Move {
     }
 
     public static class AttackMove extends Move {
-        final Piece attackedPiece;
+        public final Piece attackedPiece;
 
         public AttackMove(final Board board,
                           final Piece movedPiece,
@@ -64,29 +64,66 @@ public abstract class Move {
             super(board, movedPiece, destinationCoordinate);
             this.attackedPiece = attackedPiece;
         }
-    }
-    private static class TransitionMove implements KingSafety {
-        protected Board currentBoard;
-        protected Board transitionBoard;
-        protected Move kingMove;
 
-        public TransitionMove(final Move kingMove) {
-            this.currentBoard = kingMove.board;
-            this.kingMove = kingMove;
-            this.transitionBoard = currentBoard.clone();
+        @Override
+        public String toString() {
+            return "Moved piece: " + movedPiece.getPieceType() + " Current coordinate: " + movedPiece.getPieceCoordinate() +
+                    " Destination coordinate: " + destinationCoordinate + " Attacked Piece: " + attackedPiece;
         }
-        public void createMove(final Move transitionMove) {
-            transitionBoard.setMove(transitionMove);
+    }
+    public static class UndoMove extends Move {
+        public final Piece undoAttackedPiece;
+        public UndoMove(final Board board,
+                        final Piece movedPiece,
+                        final int destinationCoordinate,
+                        final Piece undoAttackedPiece) {
+            super(board, movedPiece, destinationCoordinate);
+            this.undoAttackedPiece = undoAttackedPiece;
         }
 
         @Override
-        public boolean isOnCheck(final Move transitionMove) {
-            ArrayList<Move> allPossibleOpponentMoves = transitionMove.movedPiece.getAlliance() == Alliance.WHITE ?
+        public String toString() {
+            return "Moved Piece: " + movedPiece.getPieceType() + " Destination coordinate: " + destinationCoordinate +
+                    " Undo attacked piece: " + undoAttackedPiece;
+        }
+    }
+    public static class TransitionMove implements KingSafety {
+        protected Board transitionBoard;
+
+        public TransitionMove(final Board transitionBoard) {
+            this.transitionBoard = transitionBoard;
+        }
+        public void createMove(final Move createMove) {
+            transitionBoard.setMove(createMove);
+        }
+
+        public void undoMove(final Move undoMove) {
+            Move reverseMove;
+
+            if (undoMove instanceof PrimaryMove)
+                reverseMove = new UndoMove(transitionBoard, undoMove.movedPiece, undoMove.destinationCoordinate, null);
+            else if (undoMove instanceof AttackMove)
+                reverseMove = new UndoMove(transitionBoard, undoMove.movedPiece, undoMove.destinationCoordinate, ((AttackMove) undoMove).attackedPiece);
+
+            else reverseMove = null;
+            assert reverseMove != null;
+
+            transitionBoard.setMove(reverseMove);
+        }
+
+        @Override
+        public boolean isOnCheck(final Move kingMove) {
+            createMove(kingMove);
+            ArrayList<Move> allPossibleOpponentMoves = kingMove.movedPiece.getAlliance() == Alliance.WHITE ?
                 generateAllBlackPossibleMoves(transitionBoard) : generateAllWhitePossibleMoves(transitionBoard);
 
-            for (Move attackerMove : allPossibleOpponentMoves)
-                if (attackerMove.destinationCoordinate == transitionMove.destinationCoordinate)
+            for (Move attackerMove : allPossibleOpponentMoves) {
+                if (attackerMove.destinationCoordinate == kingMove.destinationCoordinate) {
+                    undoMove(kingMove);
                     return true;
+                }
+            }
+            undoMove(kingMove);
             return false;
         }
 
@@ -96,15 +133,11 @@ public abstract class Move {
         }
 
         @Override
-        public boolean hasEscapeMoves() {
-            Piece king = kingMove.movedPiece;
-            ArrayList<Move> allKingPossibleMoves = king.calculateLegalSquares(currentBoard);
+        public boolean hasEscapeMoves(final Move kingMove) {
+            ArrayList<Move> allKingPossibleMoves = kingMove.movedPiece.calculateLegalSquares(transitionBoard);
 
-            for (Move kingMove : allKingPossibleMoves) {
-                transitionBoard = currentBoard.clone();
-                createMove(kingMove);
-                if (!isOnCheck(kingMove)) return true;
-            }
+            for (Move kingTransitionMove : allKingPossibleMoves)
+                if (!isOnCheck(kingTransitionMove)) return true;
 
             return false;
         }
