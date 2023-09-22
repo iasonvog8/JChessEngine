@@ -53,7 +53,6 @@ public abstract class Move {
                     " Destination coordinate: " + destinationCoordinate;
         }
     }
-
     public static class AttackMove extends Move {
         public final Piece attackedPiece;
 
@@ -71,18 +70,33 @@ public abstract class Move {
                     " Destination coordinate: " + destinationCoordinate + " Attacked Piece: " + attackedPiece;
         }
     }
+    public static class PromotionMove extends Move {
+        private final Piece promotedPiece;
+
+        public PromotionMove(final Board board,
+                             final Piece movedPiece,
+                             final int destinationCoordinate,
+                             final Piece promotedPiece) {
+            super(board, movedPiece, destinationCoordinate);
+            this.promotedPiece = promotedPiece;
+        }
+
+        public Piece getPromotedPiece() {
+            return promotedPiece;
+        }
+    }
     public static class RevokeMove extends Move {
-        public final Piece undoAttackedPiece;
+        public final Piece revokedPiece;
         public RevokeMove(final Move revokeMove,
-                          final Piece undoAttackedPiece) {
+                          final Piece revokedPiece) {
             super(revokeMove.board, revokeMove.movedPiece, revokeMove.destinationCoordinate);
-            this.undoAttackedPiece = undoAttackedPiece;
+            this.revokedPiece = revokedPiece;
         }
 
         @Override
         public String toString() {
             return "Moved Piece: " + movedPiece.getPieceType() + " Destination coordinate: " + destinationCoordinate +
-                    " Undo attacked piece: " + undoAttackedPiece;
+                    " Undo attacked piece: " + revokedPiece;
         }
     }
     public static class TransitionMove implements KingSafety {
@@ -102,9 +116,7 @@ public abstract class Move {
                 reverseMove = new RevokeMove(undoMove, null);
             else if (undoMove instanceof AttackMove)
                 reverseMove = new RevokeMove(undoMove, ((AttackMove) undoMove).attackedPiece);
-
             else reverseMove = null;
-            assert reverseMove != null;
 
             transitionBoard.setMove(reverseMove);
         }
@@ -113,7 +125,7 @@ public abstract class Move {
         public boolean isOnCheck(final Move kingMove) {
             createMove(kingMove);
             ArrayList<Move> allPossibleOpponentMoves = kingMove.movedPiece.getAlliance() == Alliance.WHITE ?
-                generateAllBlackPossibleMoves(transitionBoard) : generateAllWhitePossibleMoves(transitionBoard);
+                    generateAllBlackPossibleMoves(transitionBoard) : generateAllWhitePossibleMoves(transitionBoard);
 
             for (Move attackerMove : allPossibleOpponentMoves) {
                 if (attackerMove.destinationCoordinate == kingMove.destinationCoordinate) {

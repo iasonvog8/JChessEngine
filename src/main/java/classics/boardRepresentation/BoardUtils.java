@@ -19,14 +19,19 @@
 
 package classics.boardRepresentation;
 
+import java.util.Arrays;
+
 public class BoardUtils {
     public static final int BOARD_LENGTH = 64;
     public static final int COLUMN = 8;
+    public static final int ROW = 8;
 
     public static final boolean[] FIRST_COLUMN = initCol(0);
     public static final boolean[] SECOND_COLUMN = initCol(1);
-    public static final boolean[] SIXTH_COLUMN = initCol(6);
-    public static final boolean[] SEVENTH_COLUMN = initCol(7);
+    public static final boolean[] SEVENTH = initCol(6);
+    public static final boolean[] EIGHTH = initCol(7);
+    public static final boolean[] FIRST_ROW = initRow(0);
+    public static final boolean[] EIGHTH_ROW = initRow(7);
 
     private static boolean[] initCol(int colNum) {
         boolean[] column = new boolean[BOARD_LENGTH];
@@ -35,6 +40,18 @@ public class BoardUtils {
             column[(c * COLUMN) + colNum] = true;
 
         return column;
+    }
+
+    private static boolean[] initRow(int rowNum) {
+        boolean[] raw = new boolean[BOARD_LENGTH];
+
+        int pointer = 0;
+        for (int r = ROW * rowNum; pointer < ROW; pointer++) {
+
+            raw[r + pointer] = true;
+        }
+
+        return raw;
     }
 
     public static boolean isValidTile(int tileCoordinate) {

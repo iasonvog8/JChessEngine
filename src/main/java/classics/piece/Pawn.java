@@ -16,6 +16,7 @@ public class Pawn extends Piece{
     @Override
     public ArrayList<Move> calculateLegalSquares(final Board board) {
         ArrayList<Move> allPossibleLegalMoves = new ArrayList<>();
+        boolean[] promotionRow = getAlliance() == Alliance.WHITE ? FIRST_ROW : EIGHTH_ROW;
         int destinationCoordinate;
         int verticalDirectionOffSet = getAlliance().getVerticalDirection().getDirectionOffSet();
         int behindTile = -(8 * verticalDirectionOffSet);
@@ -25,7 +26,9 @@ public class Pawn extends Piece{
 
             if (directionOffSet == 8 && isValidTile(destinationCoordinate) && !board.getTile(destinationCoordinate).isTileOccupied()) {
                 //TODO more for promotions
-                allPossibleLegalMoves.add(new PrimaryMove(board, this, destinationCoordinate));
+                if (promotionRow[destinationCoordinate])
+                    allPossibleLegalMoves.add(new PromotionMove(board, this, destinationCoordinate, null));
+                else allPossibleLegalMoves.add(new PrimaryMove(board, this, destinationCoordinate));
 
             }else if (directionOffSet == 16 && isValidTile(destinationCoordinate) &&
                     !board.getTile(destinationCoordinate).isTileOccupied() &&
@@ -41,7 +44,7 @@ public class Pawn extends Piece{
             }
 
             else if ((directionOffSet * verticalDirectionOffSet == -7 || directionOffSet * verticalDirectionOffSet == 9) &&
-                    isValidTile(destinationCoordinate) && !SEVENTH_COLUMN[pieceCoordinate]) {
+                    isValidTile(destinationCoordinate) && !EIGHTH[pieceCoordinate]) {
                 if (board.getTile(destinationCoordinate).isTileOccupied() && board.getTile(destinationCoordinate).getPiece().getAlliance() !=
                         board.getTile(pieceCoordinate).getPiece().getAlliance()) {
                     allPossibleLegalMoves.add(new AttackMove(board, this, destinationCoordinate,

@@ -63,13 +63,13 @@ public class Board {
                 chessBoardPieces.remove(((AttackMove) move).attackedPiece.getPieceCoordinate());
 
         }else if (move instanceof RevokeMove) {
-            if (((RevokeMove) move).undoAttackedPiece != null) {
-                int undoLocation = ((RevokeMove) move).undoAttackedPiece.getPieceCoordinate();
+            if (((RevokeMove) move).revokedPiece != null) {
+                int undoLocation = ((RevokeMove) move).revokedPiece.getPieceCoordinate();
                 int movedPieceLocation = move.movedPiece.getPieceCoordinate();
 
-                setTile(undoLocation, new OccupiedTile(undoLocation, ((RevokeMove) move).undoAttackedPiece));
+                setTile(undoLocation, new OccupiedTile(undoLocation, ((RevokeMove) move).revokedPiece));
                 setTile(movedPieceLocation, new OccupiedTile(movedPieceLocation, move.movedPiece));
-                chessBoardPieces.put(undoLocation, ((RevokeMove) move).undoAttackedPiece);
+                chessBoardPieces.put(undoLocation, ((RevokeMove) move).revokedPiece);
                 chessBoardPieces.put(movedPieceLocation, move.movedPiece);
             }
             else {

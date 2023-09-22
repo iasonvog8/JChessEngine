@@ -22,7 +22,7 @@ public class Queen extends Piece{
             destinationCoordinate = pieceCoordinate;
 
             while (!isFirstColumnExclusive(destinationCoordinate, dir) &&
-                    !isSeventhColumnExclusive(destinationCoordinate, dir)) {
+                    !isEighthColumnExclusive(destinationCoordinate, dir)) {
 
                 destinationCoordinate += dir;
                 if (!isValidTile(destinationCoordinate))
@@ -44,7 +44,7 @@ public class Queen extends Piece{
     private boolean isFirstColumnExclusive(final int currentPosition, final int direction) {
         return (FIRST_COLUMN[currentPosition] && (direction == -9 || direction == 7 || direction == -1));
     }
-    private boolean isSeventhColumnExclusive(final int currentPosition, final int direction) {
-        return (SEVENTH_COLUMN[currentPosition] && (direction == 9 || direction == -7 || direction == 1));
+    private boolean isEighthColumnExclusive(final int currentPosition, final int direction) {
+        return (EIGHTH[currentPosition] && (direction == 9 || direction == -7 || direction == 1));
     }
 }

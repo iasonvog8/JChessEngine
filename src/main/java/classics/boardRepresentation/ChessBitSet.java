@@ -25,8 +25,8 @@ public class ChessBitSet {
         bitSets.add(new ChessBitSet(new Pawn(12, Alliance.BLACK)));
         bitSets.add(new ChessBitSet(new Pawn(13, Alliance.BLACK)));
         bitSets.add(new ChessBitSet(new Pawn(14, Alliance.BLACK)));
-        bitSets.add(new ChessBitSet(new Pawn(15, Alliance.BLACK)));
-        bitSets.add(new ChessBitSet(new Rook(0, Alliance.BLACK)));
+        bitSets.add(new ChessBitSet(new Pawn(19, Alliance.BLACK)));
+        bitSets.add(new ChessBitSet(new Rook(28, Alliance.BLACK)));
         bitSets.add(new ChessBitSet(new Rook(7, Alliance.BLACK)));
         bitSets.add(new ChessBitSet(new Knight(6, Alliance.BLACK)));
         bitSets.add(new ChessBitSet(new Knight(1, Alliance.BLACK)));

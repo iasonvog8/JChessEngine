@@ -23,7 +23,7 @@ public class King extends Piece {
             destinationCoordinate = pieceCoordinate + dir;
 
             if (isNotFirstColumnExclusive(pieceCoordinate, dir)  &&
-                isNotSeventhColumnExclusive(pieceCoordinate, dir)&&
+                isNotEighthColumnExclusive(pieceCoordinate, dir)&&
                 isValidTile(destinationCoordinate)) {
 
                 if (!board.getTile(destinationCoordinate).isTileOccupied()) {
@@ -52,7 +52,7 @@ public class King extends Piece {
     private boolean isNotFirstColumnExclusive(int currentPosition, int direction) {
         return (!FIRST_COLUMN[currentPosition] || direction != -9 && direction != 7 && direction != -1);
     }
-    private boolean isNotSeventhColumnExclusive(int currentPosition, int direction) {
-        return (!SEVENTH_COLUMN[currentPosition] || direction != 9 && direction != -7 && direction != 1);
+    private boolean isNotEighthColumnExclusive(int currentPosition, int direction) {
+        return (!EIGHTH[currentPosition] || direction != 9 && direction != -7 && direction != 1);
     }
 }

@@ -24,8 +24,8 @@ public class Knight extends Piece{
 
             if (!isFirstColumnExclusive(pieceCoordinate, dir)  &&
                 !isSecondColumnExclusive(pieceCoordinate, dir) &&
-                !isSixthColumnExclusive(pieceCoordinate, dir)  &&
-                !isSeventhColumnExclusive(pieceCoordinate, dir)&&
+                !isSeventhColumnExclusive(pieceCoordinate, dir)  &&
+                !isEighthColumnExclusive(pieceCoordinate, dir)&&
                 isValidTile(destinationCoordinate)) {
 
                 if (!board.getTile(destinationCoordinate).isTileOccupied()) // or ... instanceof EmptyTile
@@ -48,11 +48,11 @@ public class Knight extends Piece{
     private boolean isSecondColumnExclusive(final int currentPosition, final int direction) {
         return (SECOND_COLUMN[currentPosition] && (direction == -10 || direction == 6));
     }
-    private boolean isSixthColumnExclusive(final int currentPosition, final int direction) {
-        return (SIXTH_COLUMN[currentPosition] && (direction == 10 ||direction == -6));
-    }
     private boolean isSeventhColumnExclusive(final int currentPosition, final int direction) {
-        return (SEVENTH_COLUMN[currentPosition] && (direction == 10 ||direction == -6 ||
+        return (SEVENTH[currentPosition] && (direction == 10 ||direction == -6));
+    }
+    private boolean isEighthColumnExclusive(final int currentPosition, final int direction) {
+        return (EIGHTH[currentPosition] && (direction == 10 ||direction == -6 ||
                 direction == 17 || direction == -15));
     }
 }

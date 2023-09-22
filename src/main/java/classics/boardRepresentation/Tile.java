@@ -62,4 +62,9 @@ public abstract class Tile {
             return tilePiece;
         }
     }
+
+    @Override
+    public String toString() {
+        return "Tile piece: " + getPiece();
+    }
 }

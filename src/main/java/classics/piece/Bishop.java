@@ -23,7 +23,7 @@ public class Bishop extends Piece{
             destinationCoordinate = pieceCoordinate;
 
            while (isNotFirstColumnExclusive(destinationCoordinate, dir) &&
-                    isNotSeventhColumnExclusive(destinationCoordinate, dir)) {
+                    isNotEighthColumnExclusive(destinationCoordinate, dir)) {
 
                destinationCoordinate += dir;
                if (!isValidTile(destinationCoordinate))
@@ -45,7 +45,7 @@ public class Bishop extends Piece{
     private boolean isNotFirstColumnExclusive(final int currentPosition, final int direction) {
         return (!FIRST_COLUMN[currentPosition] || direction != -9 && direction != 7);
     }
-    private boolean isNotSeventhColumnExclusive(final int currentPosition, final int direction) {
-        return (!SEVENTH_COLUMN[currentPosition] || direction != 9 && direction != -7);
+    private boolean isNotEighthColumnExclusive(final int currentPosition, final int direction) {
+        return (!EIGHTH[currentPosition] || direction != 9 && direction != -7);
     }
 }
