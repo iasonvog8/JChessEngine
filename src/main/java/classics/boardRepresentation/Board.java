@@ -153,7 +153,7 @@ public class Board implements Cloneable{
     public Board clone() throws CloneNotSupportedException {
         try {
 
-            Board clonedBoard = (Board) super.clone();
+            final Board clonedBoard = (Board) super.clone();
 
             // Now, handle deep copying of the internal state, if needed
             // For example, you may need to clone the chessBoard and chessBoardPieces objects

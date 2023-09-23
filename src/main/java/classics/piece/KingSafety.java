@@ -3,11 +3,13 @@ package classics.piece;
 import classics.boardRepresentation.Board;
 import classics.move.Move;
 
+import java.util.ArrayList;
+
 public interface KingSafety {
 
      boolean isOnCheck(final Move kingMove);
 
-     boolean isThereBlockers(final int checkCoordinate);
-     boolean hasEscapeMoves(final Move kingMove);
-     boolean isDone(final Board board);
+     ArrayList<Move> getBlockers(final Board board, final Piece king);
+     boolean hasEscapeMoves(final Piece king);
+     boolean isDone(final Board board, final Piece king);
 }
