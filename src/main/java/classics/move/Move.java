@@ -214,9 +214,11 @@ public abstract class Move {
                 for (Move attackerMove : allPossibleOpponentMoves) {
                     if (attackerMove.destinationCoordinate == kingMove.destinationCoordinate) {
                         revokeMove(copyBoard);
+                        kingMove.movedPiece.setFirstMove(true);
                         return true;
                     }
                 }
+                kingMove.movedPiece.setFirstMove(true);
                 revokeMove(copyBoard);
             } catch (CloneNotSupportedException e) {
                 throw new RuntimeException(e);

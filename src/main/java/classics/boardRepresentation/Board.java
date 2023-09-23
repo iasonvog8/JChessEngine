@@ -54,6 +54,9 @@ public class Board implements Cloneable{
         if (move instanceof PrimaryMove || move instanceof AttackMove) {
             int locationCoordinate = move.movedPiece.getPieceCoordinate();
 
+            if (move.movedPiece.isFirstMove())
+                move.movedPiece.setFirstMove(false);
+
             setTile(locationCoordinate, new EmptyTile(locationCoordinate));
             setTile(move.destinationCoordinate, new OccupiedTile(move.destinationCoordinate, move.movedPiece));
             chessBoardPieces.remove(locationCoordinate);

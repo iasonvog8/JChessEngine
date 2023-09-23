@@ -46,9 +46,9 @@ public class ChessBitSet {
         bitSets.add(new ChessBitSet(new Rook(56, Alliance.WHITE)));
         bitSets.add(new ChessBitSet(new Rook(63, Alliance.WHITE)));
         bitSets.add(new ChessBitSet(new Knight(57, Alliance.WHITE)));
-        bitSets.add(new ChessBitSet(new Knight(62, Alliance.WHITE)));
+        //bitSets.add(new ChessBitSet(new Knight(62, Alliance.WHITE)));
         bitSets.add(new ChessBitSet(new Bishop(58, Alliance.WHITE)));
-        bitSets.add(new ChessBitSet(new Bishop(61, Alliance.WHITE)));
+        //bitSets.add(new ChessBitSet(new Bishop(61, Alliance.WHITE)));
         bitSets.add(new ChessBitSet(new Queen(59, Alliance.WHITE)));
         bitSets.add(new ChessBitSet(new King(60, Alliance.WHITE)));
 
