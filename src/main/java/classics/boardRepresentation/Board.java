@@ -32,9 +32,9 @@ import static classics.boardRepresentation.BoardUtils.*;
 import static classics.boardRepresentation.Tile.*;
 import static classics.move.Move.*;
 
-public class Board {
+public class Board implements Cloneable{
     private Tile[] chessBoard;
-    private final HashMap<Integer, Piece> chessBoardPieces = new HashMap<>();
+    private HashMap<Integer, Piece> chessBoardPieces = new HashMap<>();
     public Board() {
         chessBoard = new Tile[BOARD_LENGTH];
     }
@@ -62,24 +62,14 @@ public class Board {
             if (move instanceof AttackMove)
                 chessBoardPieces.remove(((AttackMove) move).attackedPiece.getPieceCoordinate());
 
-        }else if (move instanceof RevokeMove) {
-            if (((RevokeMove) move).revokedPiece != null) {
-                int undoLocation = ((RevokeMove) move).revokedPiece.getPieceCoordinate();
-                int movedPieceLocation = move.movedPiece.getPieceCoordinate();
+        }else if (move instanceof  PromotionMove) {
+            int promotedPieceCoordinate = move.destinationCoordinate;
+            int promotedPawnCoordinate = move.movedPiece.getPieceCoordinate();
 
-                setTile(undoLocation, new OccupiedTile(undoLocation, ((RevokeMove) move).revokedPiece));
-                setTile(movedPieceLocation, new OccupiedTile(movedPieceLocation, move.movedPiece));
-                chessBoardPieces.put(undoLocation, ((RevokeMove) move).revokedPiece);
-                chessBoardPieces.put(movedPieceLocation, move.movedPiece);
-            }
-            else {
-                int movedPieceLocation = move.movedPiece.getPieceCoordinate();
-
-                setTile(move.destinationCoordinate, new EmptyTile(move.destinationCoordinate));
-                setTile(movedPieceLocation, new OccupiedTile(movedPieceLocation, move.movedPiece));
-                chessBoardPieces.remove(move.destinationCoordinate);
-                chessBoardPieces.put(movedPieceLocation, move.movedPiece);
-            }
+            setTile(promotedPawnCoordinate, new EmptyTile(promotedPawnCoordinate));
+            setTile(promotedPieceCoordinate, new OccupiedTile(promotedPieceCoordinate, ((PromotionMove) move).promotedPiece));
+            chessBoardPieces.remove(promotedPawnCoordinate);
+            chessBoardPieces.put(promotedPieceCoordinate, ((PromotionMove) move).promotedPiece);
         }
     }
     public Tile getTile(final int tileCoordinate) {
@@ -143,5 +133,22 @@ public class Board {
             }else System.out.print("  |");
         }
         System.out.println("\n" + "+--".repeat(8) + "+");
+    }
+    @Override
+    public Board clone() throws CloneNotSupportedException {
+        try {
+
+            Board clonedBoard = (Board) super.clone();
+
+            // Now, handle deep copying of the internal state, if needed
+            // For example, you may need to clone the chessBoard and chessBoardPieces objects
+
+            clonedBoard.chessBoard = this.chessBoard.clone();
+            clonedBoard.chessBoardPieces = new HashMap<>(this.chessBoardPieces);
+            return clonedBoard;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

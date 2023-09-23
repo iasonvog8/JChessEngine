@@ -71,7 +71,7 @@ public abstract class Move {
         }
     }
     public static class PromotionMove extends Move {
-        private final Piece promotedPiece;
+        public Piece promotedPiece;
 
         public PromotionMove(final Board board,
                              final Piece movedPiece,
@@ -81,22 +81,8 @@ public abstract class Move {
             this.promotedPiece = promotedPiece;
         }
 
-        public Piece getPromotedPiece() {
-            return promotedPiece;
-        }
-    }
-    public static class RevokeMove extends Move {
-        public final Piece revokedPiece;
-        public RevokeMove(final Move revokeMove,
-                          final Piece revokedPiece) {
-            super(revokeMove.board, revokeMove.movedPiece, revokeMove.destinationCoordinate);
-            this.revokedPiece = revokedPiece;
-        }
-
-        @Override
-        public String toString() {
-            return "Moved Piece: " + movedPiece.getPieceType() + " Destination coordinate: " + destinationCoordinate +
-                    " Undo attacked piece: " + revokedPiece;
+        public void setPromotedPiece(Piece promotedPieceType) {
+            this.promotedPiece =  promotedPieceType;
         }
     }
     public static class TransitionMove implements KingSafety {
@@ -109,31 +95,31 @@ public abstract class Move {
             transitionBoard.setMove(createMove);
         }
 
-        public void revokeMove(final Move undoMove) {
-            Move reverseMove;
+        public void revokeMove(final Board revokeBoard) {
 
-            if (undoMove instanceof PrimaryMove)
-                reverseMove = new RevokeMove(undoMove, null);
-            else if (undoMove instanceof AttackMove)
-                reverseMove = new RevokeMove(undoMove, ((AttackMove) undoMove).attackedPiece);
-            else reverseMove = null;
-
-            transitionBoard.setMove(reverseMove);
+            transitionBoard = revokeBoard;
         }
 
         @Override
         public boolean isOnCheck(final Move kingMove) {
-            createMove(kingMove);
-            ArrayList<Move> allPossibleOpponentMoves = kingMove.movedPiece.getAlliance() == Alliance.WHITE ?
-                    generateAllBlackPossibleMoves(transitionBoard) : generateAllWhitePossibleMoves(transitionBoard);
+            try {
+                final Board copyBoard = kingMove.board.clone();
+                kingMove.board.displayBoard();
+                createMove(kingMove);
 
-            for (Move attackerMove : allPossibleOpponentMoves) {
-                if (attackerMove.destinationCoordinate == kingMove.destinationCoordinate) {
-                    revokeMove(kingMove);
-                    return true;
+                ArrayList<Move> allPossibleOpponentMoves = kingMove.movedPiece.getAlliance() == Alliance.WHITE ?
+                        generateAllBlackPossibleMoves(transitionBoard) : generateAllWhitePossibleMoves(transitionBoard);
+
+                for (Move attackerMove : allPossibleOpponentMoves) {
+                    if (attackerMove.destinationCoordinate == kingMove.destinationCoordinate) {
+                        revokeMove(copyBoard);
+                        return true;
+                    }
                 }
+                revokeMove(copyBoard);
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException(e);
             }
-            revokeMove(kingMove);
             return false;
         }
 

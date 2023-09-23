@@ -27,7 +27,12 @@ public class King extends Piece {
                 isValidTile(destinationCoordinate)) {
 
                 if (!board.getTile(destinationCoordinate).isTileOccupied()) {
-                    TransitionMove transitionMove = new TransitionMove(board);
+                    TransitionMove transitionMove;
+                    try {
+                        transitionMove = new TransitionMove(board.clone());
+                    } catch (CloneNotSupportedException e) {
+                        throw new RuntimeException(e);
+                    }
 
                     if (!transitionMove.isOnCheck(new PrimaryMove(board, this, destinationCoordinate)))
                         allPossibleLegalMoves.add(new PrimaryMove(board, this, destinationCoordinate));
@@ -35,7 +40,12 @@ public class King extends Piece {
                 } if (board.getTile(destinationCoordinate).isTileOccupied()) {
                     if (board.getTile(destinationCoordinate).getPiece().getAlliance() !=
                             board.getTile(pieceCoordinate).getPiece().getAlliance()) {
-                        TransitionMove transitionMove = new TransitionMove(board);
+                        TransitionMove transitionMove;
+                        try {
+                            transitionMove = new TransitionMove(board.clone());
+                        } catch (CloneNotSupportedException e) {
+                            throw new RuntimeException(e);
+                        }
 
                         if (!transitionMove.isOnCheck(new AttackMove(board, this, destinationCoordinate,
                                 board.getTile(destinationCoordinate).getPiece())))
@@ -43,7 +53,7 @@ public class King extends Piece {
                                 board.getTile(destinationCoordinate).getPiece()));
                     }
                 }
-            }
+            }//TODO castling
         }
 
         return allPossibleLegalMoves;
