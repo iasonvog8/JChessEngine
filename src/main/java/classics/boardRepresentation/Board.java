@@ -62,7 +62,8 @@ public class Board implements Cloneable{
             if (move instanceof AttackMove)
                 chessBoardPieces.remove(((AttackMove) move).attackedPiece.getPieceCoordinate());
 
-        }else if (move instanceof  PromotionMove) {
+        }
+        else if (move instanceof  PromotionMove) {
             int promotedPieceCoordinate = move.destinationCoordinate;
             int promotedPawnCoordinate = move.movedPiece.getPieceCoordinate();
 
@@ -70,6 +71,17 @@ public class Board implements Cloneable{
             setTile(promotedPieceCoordinate, new OccupiedTile(promotedPieceCoordinate, ((PromotionMove) move).promotedPiece));
             chessBoardPieces.remove(promotedPawnCoordinate);
             chessBoardPieces.put(promotedPieceCoordinate, ((PromotionMove) move).promotedPiece);
+
+        }
+        else if (move instanceof KingSideCastling || move instanceof QueenSideCastling) {
+            move.movedPiece.setFirstMove(false);
+            ((Castling) move).rookMove.movedPiece.setFirstMove(false);
+
+            setMove(((Castling) move).rookMove);
+            setTile(move.destinationCoordinate, new OccupiedTile(move.destinationCoordinate, move.movedPiece));
+
+            chessBoardPieces.remove(move.movedPiece.getPieceCoordinate());
+            chessBoardPieces.put(move.destinationCoordinate, move.movedPiece);
         }
     }
     public Tile getTile(final int tileCoordinate) {
