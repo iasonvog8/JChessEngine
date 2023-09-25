@@ -21,7 +21,7 @@
 package classics.move;
 
 import static classics.move.MoveGenerator.*;
-import classics.boardRepresentation.Board;
+import classics.board.Board;
 import classics.piece.Alliance;
 import classics.piece.KingSafety;
 import classics.piece.Piece;
@@ -92,6 +92,18 @@ public abstract class Move {
                     " Destination coordinate: " + destinationCoordinate + " Promoted Piece: " + promotedPiece;
         }
     }
+    public static class EnPassantMove extends Move {
+        public final Piece attackedPawn;
+
+        public EnPassantMove(final Board board,
+                             final Piece movedPiece,
+                             final int destinationCoordinate,
+                             final Piece attackedPawn) {
+            super(board, movedPiece, destinationCoordinate);
+            this.attackedPawn = attackedPawn;
+        }
+    }
+
     public static class Castling extends Move {
         public final PrimaryMove rookMove;
 

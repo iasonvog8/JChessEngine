@@ -1,11 +1,11 @@
 package classics.piece;
 
-import classics.boardRepresentation.Board;
+import classics.board.Board;
 import classics.move.Move;
 
 import java.util.ArrayList;
 
-import static classics.boardRepresentation.BoardUtils.*;
+import static classics.board.BoardUtils.*;
 
 public class Queen extends Piece{
     private final int[] CANDIDATE_MOVE_DIRECTIONS = {-9, -8, -7, -1, 1, 7, 8, 9};

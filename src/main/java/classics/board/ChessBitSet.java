@@ -1,4 +1,4 @@
-package classics.boardRepresentation;
+package classics.board;
 
 import classics.piece.*;
 

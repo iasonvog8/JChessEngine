@@ -17,9 +17,7 @@
  * e.g. board partition, exclusive rows & columns, etc.
   */
 
-package classics.boardRepresentation;
-
-import java.util.Arrays;
+package classics.board;
 
 public class BoardUtils {
     public static final int BOARD_LENGTH = 64;
@@ -31,6 +29,8 @@ public class BoardUtils {
     public static final boolean[] SEVENTH = initCol(6);
     public static final boolean[] EIGHTH = initCol(7);
     public static final boolean[] FIRST_ROW = initRow(0);
+    public static final boolean[] FOURTH_ROW = initRow(3);
+    public static final boolean[] FIFTH_ROW = initRow(4);
     public static final boolean[] EIGHTH_ROW = initRow(7);
 
     private static boolean[] initCol(int colNum) {

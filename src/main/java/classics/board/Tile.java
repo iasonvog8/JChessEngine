@@ -17,7 +17,7 @@
  * piece occupying the square (if any) and its position.
  */
 
-package classics.boardRepresentation;
+package classics.board;
 
 import classics.piece.Piece;
 

@@ -21,7 +21,7 @@
 
 package classics.piece;
 
-import classics.boardRepresentation.Board;
+import classics.board.Board;
 import classics.move.Move;
 
 import java.util.ArrayList;

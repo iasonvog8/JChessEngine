@@ -18,7 +18,7 @@
  * and half-move and full-move counters for the 50-move rule and move number.
  */
 
-package classics.boardRepresentation;
+package classics.board;
 
 public class Position {
     protected boolean isWhiteTurn;

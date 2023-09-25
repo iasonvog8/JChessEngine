@@ -19,7 +19,7 @@
 
 package classics.move;
 
-import classics.boardRepresentation.Board;
+import classics.board.Board;
 import classics.piece.Piece;
 
 import java.util.ArrayList;

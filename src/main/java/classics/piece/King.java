@@ -1,12 +1,12 @@
 package classics.piece;
 
-import classics.boardRepresentation.Board;
+import classics.board.Board;
 import classics.move.Move;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
-import static classics.boardRepresentation.BoardUtils.*;
+import static classics.board.BoardUtils.*;
 import static classics.move.Move.*;
 import static classics.move.Move.KingSideCastling.*;
 import static classics.move.Move.QueenSideCastling.*;

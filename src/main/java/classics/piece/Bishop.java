@@ -1,11 +1,11 @@
 package classics.piece;
 
-import classics.boardRepresentation.Board;
+import classics.board.Board;
 import classics.move.Move;
 
 import java.util.ArrayList;
 
-import static classics.boardRepresentation.BoardUtils.*;
+import static classics.board.BoardUtils.*;
 import static classics.move.Move.*;
 
 public class Bishop extends Piece{

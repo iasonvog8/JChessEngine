@@ -18,23 +18,25 @@
  * of the game.
  */
 
-package classics.boardRepresentation;
+package classics.board;
 
 import classics.move.Move;
 import classics.piece.Alliance;
 import classics.piece.Piece;
+import classics.piece.PieceType;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
-import static classics.boardRepresentation.BoardUtils.*;
-import static classics.boardRepresentation.Tile.*;
+import static classics.board.BoardUtils.*;
+import static classics.board.Tile.*;
 import static classics.move.Move.*;
 
 public class Board implements Cloneable{
     private Tile[] chessBoard;
     private HashMap<Integer, Piece> chessBoardPieces = new HashMap<>();
+    private int enPassantTarget = 0;
     public Board() {
         chessBoard = new Tile[BOARD_LENGTH];
     }
@@ -43,6 +45,7 @@ public class Board implements Cloneable{
         for (int t = 0; t < BOARD_LENGTH; t++)
             setTile(t, new EmptyTile(t));
     }
+
     public void setBoard(final ArrayList<ChessBitSet> bitSet) {
         initBoard();
         for (ChessBitSet bit : bitSet) {
@@ -50,9 +53,16 @@ public class Board implements Cloneable{
             chessBoardPieces.put(bit.getBit().getPieceCoordinate(), bit.getBit());
         }
     }
+
     public void setMove(final Move move) {
+        enPassantTarget = 0;
+
         if (move instanceof PrimaryMove || move instanceof AttackMove) {
             int locationCoordinate = move.movedPiece.getPieceCoordinate();
+
+            if (move.movedPiece.getPieceType() == PieceType.PAWN &&
+                move.movedPiece.isFirstMove())
+                enPassantTarget = move.destinationCoordinate + (move.movedPiece.getAlliance() == Alliance.WHITE ? 8 : -8);
 
             if (move.movedPiece.isFirstMove())
                 move.movedPiece.setFirstMove(false);
@@ -86,17 +96,32 @@ public class Board implements Cloneable{
             chessBoardPieces.remove(move.movedPiece.getPieceCoordinate());
             chessBoardPieces.put(move.destinationCoordinate, move.movedPiece);
         }
+        else if (move instanceof EnPassantMove) {
+            int attackedPawnCoordinate = ((EnPassantMove) move).attackedPawn.getPieceCoordinate();
+
+            setTile(move.movedPiece.getPieceCoordinate(), new EmptyTile(move.movedPiece.getPieceCoordinate()));
+            setTile(move.destinationCoordinate, new OccupiedTile(move.destinationCoordinate, move.movedPiece));
+            setTile(attackedPawnCoordinate, new EmptyTile(attackedPawnCoordinate));
+
+            chessBoardPieces.remove(move.movedPiece.getPieceCoordinate());
+            chessBoardPieces.remove(attackedPawnCoordinate);
+            chessBoardPieces.put(move.destinationCoordinate, move.movedPiece);
+        }
     }
+
     public Tile getTile(final int tileCoordinate) {
         return chessBoard[tileCoordinate];
     }
+
     public void setTile(final int tileCoordinate, final Tile tile) {
         chessBoard[tileCoordinate] = tile;
     }
+
     public ArrayList<Piece> getAllPieces() {
         Collection<Piece> pieces = chessBoardPieces.values();
         return new ArrayList<>(pieces);
     }
+
     public ArrayList<Piece> getAllWhitePieces() {
         ArrayList<Piece> boardPieces = new ArrayList<>();
 
@@ -125,6 +150,14 @@ public class Board implements Cloneable{
         for (Tile square : chessBoard)
             if (square instanceof OccupiedTile)
                 chessBoardPieces.put(square.coordinate, square.getPiece());
+    }
+
+    public int getEnPassantTarget() {
+        return enPassantTarget;
+    }
+
+    public void setEnPassantTarget(int enPassantTarget) {
+        this.enPassantTarget = enPassantTarget;
     }
     public void displayBoard() {
         for (int sq = 0; sq < BOARD_LENGTH; sq++) {
