@@ -193,6 +193,7 @@ public class Board implements Cloneable{
 
             clonedBoard.chessBoard = this.chessBoard.clone();
             clonedBoard.chessBoardPieces = new HashMap<>(this.chessBoardPieces);
+            clonedBoard.enPassantTarget = this.enPassantTarget;
             return clonedBoard;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
