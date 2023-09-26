@@ -15,5 +15,35 @@
 
 package GUI;
 
-public class ChessGUI {
+import classics.board.Board;
+import classics.board.ChessBitSet;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+
+public class ChessGUI extends Application {
+    @Override
+    public void start(Stage stage)  {
+        Board board = new Board();
+        board.setBoard(ChessBitSet.classicBitSet());
+
+        GridPane chessBoard = ChessBoardPanel.createChessBoard();
+        ChessBoardPanel.setPieces(chessBoard, board);
+        chessBoard.setMaxHeight(800);
+        chessBoard.setMaxWidth(800);
+        chessBoard.setMinHeight(800);
+        chessBoard.setMinHeight(800);
+
+        Scene scene = new Scene(chessBoard);
+
+        stage.setResizable(false);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
 }

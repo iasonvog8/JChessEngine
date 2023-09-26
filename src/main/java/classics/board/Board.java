@@ -55,14 +55,14 @@ public class Board implements Cloneable{
     }
 
     public void setMove(final Move move) {
-        enPassantTarget = 0;
+        setEnPassantTarget(0);
 
         if (move instanceof PrimaryMove || move instanceof AttackMove) {
             int locationCoordinate = move.movedPiece.getPieceCoordinate();
 
             if (move.movedPiece.getPieceType() == PieceType.PAWN &&
                 move.movedPiece.isFirstMove())
-                enPassantTarget = move.destinationCoordinate + (move.movedPiece.getAlliance() == Alliance.WHITE ? 8 : -8);
+                setEnPassantTarget(move.destinationCoordinate + (move.movedPiece.getAlliance() == Alliance.WHITE ? 8 : -8));
 
             if (move.movedPiece.isFirstMove())
                 move.movedPiece.setFirstMove(false);
