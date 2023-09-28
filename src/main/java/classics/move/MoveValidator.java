@@ -33,9 +33,11 @@ public class MoveValidator {
                                                                 MoveGenerator.generateAllBlackPossibleMoves(board);
 
         for (Move legalMove : allPossiblePlayerMove) {
-            System.out.println(legalMove + " " + playerMove);
+            if (legalMove.equals(playerMove))
+                System.out.println(legalMove + " " + playerMove);
             if (legalMove.equals(playerMove)) return true;
         }
         return false;
     }
+
 }

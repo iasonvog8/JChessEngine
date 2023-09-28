@@ -33,6 +33,7 @@ public class King extends Piece {
                 isValidTile(destinationCoordinate)) {
 
                 if (!board.getTile(destinationCoordinate).isTileOccupied()) {
+                    /*
                     try {
                         transitionMove = new TransitionMove(board.clone());
                     } catch (CloneNotSupportedException e) {
@@ -40,11 +41,13 @@ public class King extends Piece {
                     }
 
                     if (!transitionMove.isOnCheck(new PrimaryMove(board, this, destinationCoordinate)))
+                     */
                         allPossibleLegalMoves.add(new PrimaryMove(board, this, destinationCoordinate));
 
                 } if (board.getTile(destinationCoordinate).isTileOccupied()) {
                     if (board.getTile(destinationCoordinate).getPiece().getAlliance() !=
                             board.getTile(pieceCoordinate).getPiece().getAlliance()) {
+                        /*
                         try {
                             transitionMove = new TransitionMove(board.clone());
                         } catch (CloneNotSupportedException e) {
@@ -53,6 +56,7 @@ public class King extends Piece {
 
                         if (!transitionMove.isOnCheck(new AttackMove(board, this, destinationCoordinate,
                                 board.getTile(destinationCoordinate).getPiece())))
+                         */
                             allPossibleLegalMoves.add(new AttackMove(board, this, destinationCoordinate,
                                 board.getTile(destinationCoordinate).getPiece()));
                     }
@@ -61,12 +65,14 @@ public class King extends Piece {
         }
         if (isThereKingSideRook(board, getAlliance()) && isAvailableKingCorridor(board, getAlliance())) {
             if (Objects.requireNonNull(getKingSideRook(board, getAlliance())).isFirstMove() && this.isFirstMove()) {
+                /*
                 try {
                     transitionMove = new TransitionMove(board.clone());
                 } catch (CloneNotSupportedException e) {
                     throw new RuntimeException(e);
                 }
                 if (!transitionMove.isOnCheck(new PrimaryMove(board, this, kingSideCastlingCoordinate - 1)))
+                 */
                     allPossibleLegalMoves.add(new KingSideCastling(board, this, kingSideCastlingCoordinate - 1,
                             new PrimaryMove(board, getKingSideRook(board, getAlliance()), kingSideCastlingCoordinate - 2)));
             }
@@ -74,12 +80,14 @@ public class King extends Piece {
         }
         if (isThereQueenSideRook(board, getAlliance()) && isAvailableQueenCorridor(board, getAlliance())) {
             if (Objects.requireNonNull(getQueenSideRook(board, getAlliance())).isFirstMove() && this.isFirstMove()) {
+                /*
                 try {
                     transitionMove = new TransitionMove(board.clone());
                 } catch (CloneNotSupportedException e) {
                     throw new RuntimeException(e);
                 }
                 if (!transitionMove.isOnCheck(new PrimaryMove(board, this, queenSideCastlingCoordinate + 2)))
+                 */
                     allPossibleLegalMoves.add(new QueenSideCastling(board, this, queenSideCastlingCoordinate + 2,
                             new PrimaryMove(board, getQueenSideRook(board, getAlliance()), queenSideCastlingCoordinate + 3)));
             }

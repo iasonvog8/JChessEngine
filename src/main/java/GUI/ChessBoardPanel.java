@@ -64,7 +64,7 @@ public class ChessBoardPanel {
             if (clickedColumn != -1 && clickedRow != -1) {
                 if (selectedPiecePosition == -1 && board.getTile(clickedRow * 8 + clickedColumn).isTileOccupied())
                     selectedPiecePosition = clickedRow * 8 + clickedColumn;
-                else {
+                else if (selectedPiecePosition >= 0){
                     selectedDestinationCoordinate = clickedRow * 8 + clickedColumn;
                     setMove(board, chessBoardPanel);
 

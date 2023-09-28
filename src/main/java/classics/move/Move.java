@@ -103,7 +103,6 @@ public abstract class Move {
             this.attackedPawn = attackedPawn;
         }
     }
-
     public static class Castling extends Move {
         public final PrimaryMove rookMove;
 
@@ -298,5 +297,20 @@ public abstract class Move {
         public boolean isDone(final Board board, final Piece king) {
             return hasEscapeMoves(king) && !getBlockers(board, king).isEmpty() && !isOnCheck(new PrimaryMove(board, king, king.getPieceCoordinate()));
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Move other = (Move) obj;
+        return this.destinationCoordinate == other.destinationCoordinate
+                && this.movedPiece == other.movedPiece
+                && this.board == other.board;
     }
 }
