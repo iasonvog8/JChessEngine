@@ -21,15 +21,21 @@
 package classics.move;
 
 import classics.board.Board;
+import classics.piece.Alliance;
 
 import java.util.ArrayList;
 
 public class MoveValidator {
     public static boolean isValidMove(final Move playerMove,
-                                      final boolean isWhitePlayer,
+                                      final Alliance isWhitePlayer,
                                       final Board board) {
-        ArrayList<Move> allPossiblePlayerMove = isWhitePlayer ? MoveGenerator.generateAllWhitePossibleMoves(board) :
+        ArrayList<Move> allPossiblePlayerMove = isWhitePlayer == Alliance.WHITE ? MoveGenerator.generateAllWhitePossibleMoves(board) :
                                                                 MoveGenerator.generateAllBlackPossibleMoves(board);
-        return allPossiblePlayerMove.contains(playerMove);
+
+        for (Move legalMove : allPossiblePlayerMove) {
+            System.out.println(legalMove + " " + playerMove);
+            if (legalMove.equals(playerMove)) return true;
+        }
+        return false;
     }
 }

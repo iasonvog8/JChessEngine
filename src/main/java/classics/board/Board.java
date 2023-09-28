@@ -55,30 +55,31 @@ public class Board implements Cloneable{
     }
 
     public void setMove(final Move move) {
-        setEnPassantTarget(0);
+        Piece commutedPiece = move.movedPiece;
+        setEnPassantTarget(-1);
 
         if (move instanceof PrimaryMove || move instanceof AttackMove) {
-            int locationCoordinate = move.movedPiece.getPieceCoordinate();
+            final int locationCoordinate = commutedPiece.getPieceCoordinate();
+            final boolean[] enPassantRow = commutedPiece.getAlliance() == Alliance.WHITE ? FIFTH_ROW : FOURTH_ROW;
 
-            if (move.movedPiece.getPieceType() == PieceType.PAWN &&
-                move.movedPiece.isFirstMove())
-                setEnPassantTarget(move.destinationCoordinate + (move.movedPiece.getAlliance() == Alliance.WHITE ? 8 : -8));
+            if (commutedPiece.getPieceType() == PieceType.PAWN &&
+                    commutedPiece.isFirstMove() && enPassantRow[move.destinationCoordinate])
+                setEnPassantTarget(move.destinationCoordinate + (commutedPiece.getAlliance() == Alliance.WHITE ? 8 : -8));
 
-            if (move.movedPiece.isFirstMove())
-                move.movedPiece.setFirstMove(false);
+            if (commutedPiece.isFirstMove())
+                commutedPiece.setFirstMove(false);
 
             setTile(locationCoordinate, new EmptyTile(locationCoordinate));
-            setTile(move.destinationCoordinate, new OccupiedTile(move.destinationCoordinate, move.movedPiece));
+            setTile(move.destinationCoordinate, new OccupiedTile(move.destinationCoordinate, commutedPiece));
+
+            commutedPiece.setPieceCoordinate(move.destinationCoordinate);
+
             chessBoardPieces.remove(locationCoordinate);
-            chessBoardPieces.put(move.destinationCoordinate, move.movedPiece);
-
-            if (move instanceof AttackMove)
-                chessBoardPieces.remove(((AttackMove) move).attackedPiece.getPieceCoordinate());
-
+            chessBoardPieces.put(commutedPiece.getPieceCoordinate(), commutedPiece);
         }
         else if (move instanceof  PromotionMove) {
-            int promotedPieceCoordinate = move.destinationCoordinate;
-            int promotedPawnCoordinate = move.movedPiece.getPieceCoordinate();
+            final int promotedPieceCoordinate = move.destinationCoordinate;
+            final int promotedPawnCoordinate = commutedPiece.getPieceCoordinate();
 
             setTile(promotedPawnCoordinate, new EmptyTile(promotedPawnCoordinate));
             setTile(promotedPieceCoordinate, new OccupiedTile(promotedPieceCoordinate, ((PromotionMove) move).promotedPiece));
@@ -87,25 +88,32 @@ public class Board implements Cloneable{
 
         }
         else if (move instanceof KingSideCastling || move instanceof QueenSideCastling) {
-            move.movedPiece.setFirstMove(false);
+            int locationCoordinate = commutedPiece.getPieceCoordinate();
+            commutedPiece.setFirstMove(false);
             ((Castling) move).rookMove.movedPiece.setFirstMove(false);
 
             setMove(((Castling) move).rookMove);
-            setTile(move.destinationCoordinate, new OccupiedTile(move.destinationCoordinate, move.movedPiece));
+            commutedPiece.setPieceCoordinate(move.destinationCoordinate);
 
-            chessBoardPieces.remove(move.movedPiece.getPieceCoordinate());
-            chessBoardPieces.put(move.destinationCoordinate, move.movedPiece);
+            setTile(move.destinationCoordinate, new OccupiedTile(move.destinationCoordinate, commutedPiece));
+            setTile(locationCoordinate, new EmptyTile(locationCoordinate));
+
+            chessBoardPieces.remove(locationCoordinate);
+            chessBoardPieces.put(commutedPiece.getPieceCoordinate(), commutedPiece);
         }
         else if (move instanceof EnPassantMove) {
             int attackedPawnCoordinate = ((EnPassantMove) move).attackedPawn.getPieceCoordinate();
 
-            setTile(move.movedPiece.getPieceCoordinate(), new EmptyTile(move.movedPiece.getPieceCoordinate()));
-            setTile(move.destinationCoordinate, new OccupiedTile(move.destinationCoordinate, move.movedPiece));
+            setTile(commutedPiece.getPieceCoordinate(), new EmptyTile(commutedPiece.getPieceCoordinate()));
+
+            commutedPiece.setPieceCoordinate(move.destinationCoordinate);
+
+            setTile(commutedPiece.getPieceCoordinate(), new OccupiedTile(move.destinationCoordinate, commutedPiece));
             setTile(attackedPawnCoordinate, new EmptyTile(attackedPawnCoordinate));
 
-            chessBoardPieces.remove(move.movedPiece.getPieceCoordinate());
+            chessBoardPieces.remove(commutedPiece.getPieceCoordinate());
             chessBoardPieces.remove(attackedPawnCoordinate);
-            chessBoardPieces.put(move.destinationCoordinate, move.movedPiece);
+            chessBoardPieces.put(move.destinationCoordinate, commutedPiece);
         }
     }
 
@@ -138,18 +146,6 @@ public class Board implements Cloneable{
             if (blackPiece.getAlliance() == Alliance.BLACK) boardPieces.add(blackPiece);
 
         return boardPieces;
-    }
-
-    public Tile[] getChessBoard() {
-        return chessBoard;
-    }
-
-    public void setChessBoard(final Tile[] chessBoard) {
-        this.chessBoard = chessBoard;
-        chessBoardPieces.clear();
-        for (Tile square : chessBoard)
-            if (square instanceof OccupiedTile)
-                chessBoardPieces.put(square.coordinate, square.getPiece());
     }
 
     public int getEnPassantTarget() {
@@ -188,9 +184,6 @@ public class Board implements Cloneable{
 
             final Board clonedBoard = (Board) super.clone();
 
-            // Now, handle deep copying of the internal state, if needed
-            // For example, you may need to clone the chessBoard and chessBoardPieces objects
-
             clonedBoard.chessBoard = this.chessBoard.clone();
             clonedBoard.chessBoardPieces = new HashMap<>(this.chessBoardPieces);
             clonedBoard.enPassantTarget = this.enPassantTarget;
@@ -198,6 +191,5 @@ public class Board implements Cloneable{
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
-
     }
 }

@@ -23,7 +23,7 @@ public class King extends Piece {
         TransitionMove transitionMove;
         int destinationCoordinate;
         int kingSideCastlingCoordinate = getAlliance() == Alliance.WHITE ? 63 : 7;
-        int queenSideCoordinate = getAlliance() == Alliance.WHITE ? 56 : 0;
+        int queenSideCastlingCoordinate = getAlliance() == Alliance.WHITE ? 56 : 0;
 
         for (int dir : CANDIDATE_MOVE_DIRECTIONS) {
             destinationCoordinate = pieceCoordinate + dir;
@@ -79,9 +79,9 @@ public class King extends Piece {
                 } catch (CloneNotSupportedException e) {
                     throw new RuntimeException(e);
                 }
-                if (!transitionMove.isOnCheck(new PrimaryMove(board, this, queenSideCoordinate + 2)))
-                    allPossibleLegalMoves.add(new QueenSideCastling(board, this, queenSideCoordinate + 2,
-                            new PrimaryMove(board, getQueenSideRook(board, getAlliance()), queenSideCoordinate + 3)));
+                if (!transitionMove.isOnCheck(new PrimaryMove(board, this, queenSideCastlingCoordinate + 2)))
+                    allPossibleLegalMoves.add(new QueenSideCastling(board, this, queenSideCastlingCoordinate + 2,
+                            new PrimaryMove(board, getQueenSideRook(board, getAlliance()), queenSideCastlingCoordinate + 3)));
             }
         }
 

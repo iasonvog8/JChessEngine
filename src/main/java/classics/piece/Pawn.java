@@ -9,8 +9,8 @@ import java.util.ArrayList;
 
 public class Pawn extends Piece{
     private final int[] CANDIDATE_MOVE_DIRECTIONS = {16, 9, 8, 7};
-    public Pawn(final int currentCoordinate, final Alliance alliance) {
-        super(currentCoordinate, alliance, PieceType.PAWN);
+    public Pawn(final int coordinate, final Alliance alliance) {
+        super(coordinate, alliance, PieceType.PAWN);
     }
 
     @Override

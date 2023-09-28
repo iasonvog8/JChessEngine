@@ -16,22 +16,71 @@
 package GUI;
 
 import classics.board.Board;
+import classics.board.BoardUtils;
+import classics.board.Tile;
+import classics.move.Move;
+import classics.move.MoveValidator;
+import classics.piece.Alliance;
 import classics.piece.Piece;
-import javafx.animation.KeyFrame;
-import javafx.scene.control.Button;
+import classics.piece.PieceType;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import java.util.Objects;
+
+import static classics.move.Move.*;
+import static classics.move.Move.KingSideCastling.*;
+import static classics.move.Move.QueenSideCastling.*;
 import static classics.piece.Alliance.BLACK;
+import static classics.piece.Alliance.WHITE;
 
 public class ChessBoardPanel {
-    public static GridPane createChessBoard() {
+    public static int selectedPiecePosition = -1;
+    public static int selectedDestinationCoordinate = -1;
+    public static GridPane createChessBoard(final Board board) {
         GridPane chessBoardPanel = new GridPane();
         chessBoardPanel.setGridLinesVisible(true);
+        chessBoardPanel.setOnMouseClicked(e -> {
 
+            int clickedColumn = -1;
+            int clickedRow = -1;
+
+            final double mouseX = e.getX();
+            final double mouseY = e.getY();
+
+            for (javafx.scene.Node node : chessBoardPanel.getChildren()) {
+                if (node instanceof Rectangle rectangle) {
+                    if (rectangle.getBoundsInParent().contains(mouseX, mouseY)) {
+                        clickedColumn = GridPane.getColumnIndex(rectangle);
+                        clickedRow = GridPane.getRowIndex(rectangle);
+                        break;
+                    }
+                }
+            }
+
+            if (clickedColumn != -1 && clickedRow != -1) {
+                if (selectedPiecePosition == -1 && board.getTile(clickedRow * 8 + clickedColumn).isTileOccupied())
+                    selectedPiecePosition = clickedRow * 8 + clickedColumn;
+                else {
+                    selectedDestinationCoordinate = clickedRow * 8 + clickedColumn;
+                    setMove(board, chessBoardPanel);
+
+                    System.out.println("Clicked cell: (" + clickedColumn + ", " + clickedRow + ", " + selectedDestinationCoordinate + ")");
+
+                    resetSelectedTiles();
+                }
+            }
+        });
+
+        createBoard(chessBoardPanel);
+        setPieces(chessBoardPanel, board);
+        return chessBoardPanel;
+    }
+
+    public static void createBoard(final GridPane chessBoardPanel) {
         Rectangle rectangle;
         boolean isWhiteCell = true;
 
@@ -49,25 +98,25 @@ public class ChessBoardPanel {
             }
             isWhiteCell = !isWhiteCell;
         }
-
-        return chessBoardPanel;
     }
 
-    public static void setPieces(GridPane graphicBoard, Board board) {
-        ImageView[] allPiecesImage = ResourceLoader.loadClassicBitSet();
+    public static void setPieces(final GridPane graphicBoard, final Board board) {
+        ImageView[] allPiecesImage = PieceImageLoader.loadClassicBitSet();
         int piecePointer;
+        board.displayBoard();
+
+        createBoard(graphicBoard);
 
         for (Piece piece : board.getAllPieces()) {
             piecePointer = 0;
             switch (piece.getPieceType()) {
-                case KING -> {}
+                case KING -> piecePointer = 0;
                 case QUEEN -> piecePointer = 1;
                 case BISHOP -> piecePointer = 2;
                 case KNIGHT -> piecePointer = 3;
                 case ROOK -> piecePointer = 4;
                 case PAWN -> piecePointer = 5;
             }
-
             if (piece.getAlliance() == BLACK) piecePointer += 6;
 
             ImageView originalImageView = allPiecesImage[piecePointer];
@@ -76,7 +125,61 @@ public class ChessBoardPanel {
 
             pieceImage.setFitHeight(100);
             pieceImage.setFitWidth(100);
+
             graphicBoard.add(pieceImage, piece.getPieceCoordinate() % 8, piece.getPieceCoordinate() / 8);
         }
+    }
+
+    public static void setMove(final Board board, final GridPane graphicBoard) {
+        if (selectedDestinationCoordinate != -1 && selectedPiecePosition != -1) {
+            Move playerMove = calculateMoveType(board, selectedPiecePosition, selectedDestinationCoordinate);
+
+            if (MoveValidator.isValidMove(playerMove, WHITE, board)) {
+                board.setMove(Objects.requireNonNull(playerMove));
+                setPieces(graphicBoard, board);
+            }
+        }
+    }
+
+    private static Move calculateMoveType(final Board board, final int currentPosition, final int destinationPosition) {
+        final Piece selectedPiece = board.getTile(currentPosition).getPiece();
+        final Tile destinationTile = board.getTile(destinationPosition);
+        final boolean[] promotionRow = selectedPiece.getAlliance() == WHITE ? BoardUtils.FIRST_ROW : BoardUtils.EIGHTH_ROW;
+        final int enPassantTarget = board.getEnPassantTarget();
+        final int behindTile = selectedPiece.getAlliance() == BLACK ? enPassantTarget - 8 : enPassantTarget + 8;
+        final int kingSideCastlingCoordinate = selectedPiece.getAlliance() == Alliance.WHITE ? 63 : 7;
+        final int queenSideCastlingCoordinate = selectedPiece.getAlliance() == Alliance.WHITE ? 56 : 0;
+
+        if (promotionRow[destinationPosition] && selectedPiece.getPieceType() == PieceType.PAWN)
+            return new PromotionMove(board, selectedPiece, destinationPosition, null);
+        if (destinationTile.isTileOccupied())
+            return new AttackMove(board, selectedPiece, destinationPosition, destinationTile.getPiece());
+
+        if (!destinationTile.isTileOccupied()) {
+            if (selectedPiece.getPieceType() == PieceType.PAWN && destinationPosition == enPassantTarget)
+                return new EnPassantMove(board, selectedPiece, destinationPosition, board.getTile(behindTile).getPiece());
+
+            if (selectedPiece.getPieceType() == PieceType.KING && selectedPiece.isFirstMove()) {
+                //TODO when i make player class change in new move(board.getTile(60).getPiece) -> player.estimateKing
+                if (isThereKingSideRook(board, selectedPiece.getAlliance()) && isAvailableKingCorridor(board, selectedPiece.getAlliance())) {
+                    if (Objects.requireNonNull(getKingSideRook(board, selectedPiece.getAlliance())).isFirstMove() && destinationPosition == kingSideCastlingCoordinate - 1)
+                        return new KingSideCastling(board, board.getTile(60).getPiece(), kingSideCastlingCoordinate - 1,
+                                new PrimaryMove(board, getKingSideRook(board, selectedPiece.getAlliance()), kingSideCastlingCoordinate - 2));
+                }
+                if (isThereQueenSideRook(board, selectedPiece.getAlliance()) && isAvailableQueenCorridor(board, selectedPiece.getAlliance())) {
+                    if (Objects.requireNonNull(getQueenSideRook(board, selectedPiece.getAlliance())).isFirstMove() && destinationPosition == queenSideCastlingCoordinate + 2)
+                        return new QueenSideCastling(board, board.getTile(60).getPiece(), queenSideCastlingCoordinate + 2,
+                                new PrimaryMove(board, getQueenSideRook(board, selectedPiece.getAlliance()), queenSideCastlingCoordinate + 3));
+                }
+            }
+            return new PrimaryMove(board, selectedPiece, destinationPosition);
+        }
+
+        return null;
+    }
+
+    private static void resetSelectedTiles() {
+        selectedPiecePosition = -1;
+        selectedDestinationCoordinate = -1;
     }
 }

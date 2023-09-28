@@ -43,6 +43,9 @@ public abstract class Piece {
      public int getPieceCoordinate() {
           return pieceCoordinate;
      }
+     public void setPieceCoordinate(final int coordinate) {
+          pieceCoordinate = coordinate;
+     }
      public Alliance getAlliance() {
           return alliance;
      }

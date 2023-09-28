@@ -29,8 +29,7 @@ public class ChessGUI extends Application {
         Board board = new Board();
         board.setBoard(ChessBitSet.classicBitSet());
 
-        GridPane chessBoard = ChessBoardPanel.createChessBoard();
-        ChessBoardPanel.setPieces(chessBoard, board);
+        GridPane chessBoard = ChessBoardPanel.createChessBoard(board);
         chessBoard.setMaxHeight(800);
         chessBoard.setMaxWidth(800);
         chessBoard.setMinHeight(800);
@@ -40,6 +39,7 @@ public class ChessGUI extends Application {
 
         stage.setResizable(false);
         stage.setScene(scene);
+        stage.setTitle("JChess Engine");
         stage.show();
     }
 
