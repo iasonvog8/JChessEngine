@@ -22,21 +22,17 @@ package classics.board;
 
 public class Position {
     protected boolean isWhiteTurn;
-    protected boolean attack;
     protected boolean kingSideCastling;
     protected boolean queenSideCastling;
     protected int enPassantTarget;
     protected int halfMove;
     protected int fullMove;
-
     public Position(final boolean isWhiteTurn,
-                    final boolean attack,
                     final boolean kingSideCastling,
                     final boolean queenSideCastling,
                     final int enPassantTarget,
                     final int halfMove, final int fullMove) {
         this.isWhiteTurn = isWhiteTurn;
-        this.attack = attack;
         this.kingSideCastling = kingSideCastling;
         this.queenSideCastling = queenSideCastling;
         this.enPassantTarget = enPassantTarget;

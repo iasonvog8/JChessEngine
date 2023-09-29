@@ -28,6 +28,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import player.Player;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -197,7 +198,10 @@ public class ChessBoardPanel {
     private static Move calculateMoveType(final Board board, final int currentPosition, final int destinationPosition) {
         final Piece selectedPiece = board.getTile(currentPosition).getPiece();
         final Tile destinationTile = board.getTile(destinationPosition);
+        final Player player = selectedPiece.getAlliance() == WHITE ? board.whitePlayer : board.blackPlayer;
+
         final boolean[] promotionRow = selectedPiece.getAlliance() == WHITE ? BoardUtils.FIRST_ROW : BoardUtils.EIGHTH_ROW;
+
         final int enPassantTarget = board.getEnPassantTarget();
         final int behindTile = selectedPiece.getAlliance() == BLACK ? enPassantTarget - 8 : enPassantTarget + 8;
         final int kingSideCastlingCoordinate = selectedPiece.getAlliance() == Alliance.WHITE ? 63 : 7;
@@ -213,15 +217,14 @@ public class ChessBoardPanel {
                 return new EnPassantMove(board, selectedPiece, destinationPosition, board.getTile(behindTile).getPiece());
 
             if (selectedPiece.getPieceType() == PieceType.KING && selectedPiece.isFirstMove()) {
-                //TODO when i make player class change in new move(board.getTile(60).getPiece) -> player.estimateKing
                 if (isThereKingSideRook(board, selectedPiece.getAlliance()) && isAvailableKingCorridor(board, selectedPiece.getAlliance())) {
                     if (Objects.requireNonNull(getKingSideRook(board, selectedPiece.getAlliance())).isFirstMove() && destinationPosition == kingSideCastlingCoordinate - 1)
-                        return new KingSideCastling(board, board.getTile(60).getPiece(), kingSideCastlingCoordinate - 1,
+                        return new KingSideCastling(board, player.estimateKingLocation(board), kingSideCastlingCoordinate - 1,
                                 new PrimaryMove(board, getKingSideRook(board, selectedPiece.getAlliance()), kingSideCastlingCoordinate - 2));
                 }
                 if (isThereQueenSideRook(board, selectedPiece.getAlliance()) && isAvailableQueenCorridor(board, selectedPiece.getAlliance())) {
                     if (Objects.requireNonNull(getQueenSideRook(board, selectedPiece.getAlliance())).isFirstMove() && destinationPosition == queenSideCastlingCoordinate + 2)
-                        return new QueenSideCastling(board, board.getTile(60).getPiece(), queenSideCastlingCoordinate + 2,
+                        return new QueenSideCastling(board, player.estimateKingLocation(board), queenSideCastlingCoordinate + 2,
                                 new PrimaryMove(board, getQueenSideRook(board, selectedPiece.getAlliance()), queenSideCastlingCoordinate + 3));
                 }
             }

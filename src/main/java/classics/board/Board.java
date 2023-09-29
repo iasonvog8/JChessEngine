@@ -24,6 +24,8 @@ import classics.move.Move;
 import classics.piece.Alliance;
 import classics.piece.Piece;
 import classics.piece.PieceType;
+import player.BlackPlayer;
+import player.WhitePlayer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,8 +39,12 @@ public class Board implements Cloneable{
     private Tile[] chessBoard;
     private HashMap<Integer, Piece> chessBoardPieces = new HashMap<>();
     private int enPassantTarget = 0;
+    public WhitePlayer whitePlayer;
+    public BlackPlayer blackPlayer;
     public Board() {
         chessBoard = new Tile[BOARD_LENGTH];
+        whitePlayer = new WhitePlayer();
+        blackPlayer = new BlackPlayer();
     }
 
     private void initBoard() {

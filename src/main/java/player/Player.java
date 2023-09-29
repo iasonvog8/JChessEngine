@@ -18,14 +18,16 @@
 
 package player;
 
-public abstract class Player {
-    String name;
-    int level;
+import classics.board.Board;
+import classics.piece.Piece;
 
-    public Player(String name, int level) {
-        this.name = name;
-        this.level = level;
+public abstract class Player {
+
+
+    public Player() {
+
     }
 
     abstract boolean isWhitePlayer();
+    public abstract Piece estimateKingLocation(final Board board);
 }
