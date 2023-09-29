@@ -29,6 +29,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import static classics.move.Move.*;
@@ -62,25 +63,30 @@ public class ChessBoardPanel {
             }
 
             if (clickedColumn != -1 && clickedRow != -1) {
-                if (selectedPiecePosition == -1 && board.getTile(clickedRow * 8 + clickedColumn).isTileOccupied())
+                if (selectedPiecePosition == -1 && board.getTile(clickedRow * 8 + clickedColumn).isTileOccupied()) {
                     selectedPiecePosition = clickedRow * 8 + clickedColumn;
-                else if (selectedPiecePosition >= 0){
+                    markAllLegalSquares(selectedPiecePosition, board.getTile(selectedPiecePosition).getPiece().calculateLegalSquares(board), chessBoardPanel);
+                    setPieces(chessBoardPanel, board, true);
+                } else if (selectedPiecePosition >= 0 && clickedRow * 8 + clickedColumn != selectedPiecePosition){
                     selectedDestinationCoordinate = clickedRow * 8 + clickedColumn;
                     setMove(board, chessBoardPanel);
 
                     System.out.println("Clicked cell: (" + clickedColumn + ", " + clickedRow + ", " + selectedDestinationCoordinate + ")");
 
                     resetSelectedTiles();
+                }else {
+                    resetSelectedTiles();
+                    setPieces(chessBoardPanel, board, false);
                 }
             }
         });
 
         createBoard(chessBoardPanel);
-        setPieces(chessBoardPanel, board);
+        setPieces(chessBoardPanel, board, false);
         return chessBoardPanel;
     }
 
-    public static void createBoard(final GridPane chessBoardPanel) {
+    private static void createBoard(final GridPane chessBoardPanel) {
         Rectangle rectangle;
         boolean isWhiteCell = true;
 
@@ -100,12 +106,59 @@ public class ChessBoardPanel {
         }
     }
 
-    public static void setPieces(final GridPane graphicBoard, final Board board) {
+    private static void markAllLegalSquares(final int piecePosition,
+                                            final ArrayList<Move> allPlayerPossibleLegalMoves,
+                                            final GridPane chessBoardPanel) {
+        final Color markedPosition = Color.BLUE;
+        final Color markedEmptySquare =Color.rgb(255, 242, 0, 0.5);
+        final Color markedAttackedPiece = Color.rgb(94, 13, 227, 0.3);
+
+        Rectangle rectangle;
+        ArrayList<Integer> markedTiles = new ArrayList<>();
+        ArrayList<Integer> markedAttackedTiles = new ArrayList<>();
+
+        boolean isWhiteCell = true;
+        int tileCoordinate;
+
+        for (Move markedMove : allPlayerPossibleLegalMoves) {
+            if (!(markedMove instanceof AttackMove) && !(markedMove instanceof EnPassantMove))
+                markedTiles.add(markedMove.destinationCoordinate);
+            else markedAttackedTiles.add(markedMove.destinationCoordinate);
+        }
+
+
+        for (int r = 0; r < 8; r++) {
+            for (int c = 0; c < 8; c++) {
+                rectangle = new Rectangle(100, 100);
+                rectangle.setFill(isWhiteCell ? Color.BEIGE : Color.BROWN);
+                tileCoordinate = r * 8 + c;
+
+                if (tileCoordinate == piecePosition)
+                    rectangle.setFill(markedPosition);
+                else if (markedTiles.contains(tileCoordinate))
+                    rectangle.setFill(markedEmptySquare);
+                else if (markedAttackedTiles.contains(tileCoordinate))
+                    rectangle.setFill(markedAttackedPiece);
+
+
+                Pane tile = new Pane();
+                tile.getChildren().add(rectangle);
+
+                chessBoardPanel.add(rectangle, c, r);
+
+                isWhiteCell = !isWhiteCell;
+            }
+            isWhiteCell = !isWhiteCell;
+        }
+    }
+
+    private static void setPieces(final GridPane graphicBoard, final Board board, final boolean markTiles) {
         ImageView[] allPiecesImage = PieceImageLoader.loadClassicBitSet();
         int piecePointer;
         board.displayBoard();
 
-        createBoard(graphicBoard);
+        if (!markTiles)
+            createBoard(graphicBoard);
 
         for (Piece piece : board.getAllPieces()) {
             piecePointer = 0;
@@ -130,13 +183,13 @@ public class ChessBoardPanel {
         }
     }
 
-    public static void setMove(final Board board, final GridPane graphicBoard) {
+    private static void setMove(final Board board, final GridPane graphicBoard) {
         if (selectedDestinationCoordinate != -1 && selectedPiecePosition != -1) {
             Move playerMove = calculateMoveType(board, selectedPiecePosition, selectedDestinationCoordinate);
 
             if (MoveValidator.isValidMove(playerMove, WHITE, board)) {
                 board.setMove(Objects.requireNonNull(playerMove));
-                setPieces(graphicBoard, board);
+                setPieces(graphicBoard, board, false);
             }
         }
     }
