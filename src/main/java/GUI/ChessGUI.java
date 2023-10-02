@@ -20,12 +20,12 @@ import classics.board.ChessBitSet;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class ChessGUI extends Application {
     @Override
     public void start(Stage stage)  {
+        PromotionDialog.runPromotionDialog(true, 56);
         Board board = new Board();
         board.setBoard(ChessBitSet.classicBitSet());
 

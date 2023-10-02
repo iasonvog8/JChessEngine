@@ -21,7 +21,6 @@
 package classics.move;
 
 import classics.board.Board;
-import classics.piece.Alliance;
 
 import java.util.ArrayList;
 
