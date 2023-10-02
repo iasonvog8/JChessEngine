@@ -30,14 +30,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import player.Player;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 import static classics.move.Move.*;
 import static classics.move.Move.KingSideCastling.*;
 import static classics.move.Move.QueenSideCastling.*;
-import static classics.piece.Alliance.BLACK;
-import static classics.piece.Alliance.WHITE;
+import static classics.piece.Alliance.*;
+import static GUI.MoveHighlighter.*;
 
 public class ChessBoardPanel {
     private static int selectedPiecePosition = -1;
@@ -95,52 +94,6 @@ public class ChessBoardPanel {
             for (int c = 0; c < 8; c++) {
                 rectangle = new Rectangle(100, 100);
                 rectangle.setFill(isWhiteCell ? Color.BEIGE : Color.BROWN);
-
-                Pane tile = new Pane();
-                tile.getChildren().add(rectangle);
-
-                chessBoardPanel.add(rectangle, c, r);
-
-                isWhiteCell = !isWhiteCell;
-            }
-            isWhiteCell = !isWhiteCell;
-        }
-    }
-
-    private static void markAllLegalSquares(final int piecePosition,
-                                            final ArrayList<Move> allPlayerPossibleLegalMoves,
-                                            final GridPane chessBoardPanel) {
-        final Color markedPosition = Color.BLUE;
-        final Color markedEmptySquare =Color.rgb(255, 242, 0, 0.5);
-        final Color markedAttackedPiece = Color.rgb(94, 13, 227, 0.3);
-
-        Rectangle rectangle;
-        ArrayList<Integer> markedTiles = new ArrayList<>();
-        ArrayList<Integer> markedAttackedTiles = new ArrayList<>();
-
-        boolean isWhiteCell = true;
-        int tileCoordinate;
-
-        for (Move markedMove : allPlayerPossibleLegalMoves) {
-            if (!(markedMove instanceof AttackMove) && !(markedMove instanceof EnPassantMove))
-                markedTiles.add(markedMove.destinationCoordinate);
-            else markedAttackedTiles.add(markedMove.destinationCoordinate);
-        }
-
-
-        for (int r = 0; r < 8; r++) {
-            for (int c = 0; c < 8; c++) {
-                rectangle = new Rectangle(100, 100);
-                rectangle.setFill(isWhiteCell ? Color.BEIGE : Color.BROWN);
-                tileCoordinate = r * 8 + c;
-
-                if (tileCoordinate == piecePosition)
-                    rectangle.setFill(markedPosition);
-                else if (markedTiles.contains(tileCoordinate))
-                    rectangle.setFill(markedEmptySquare);
-                else if (markedAttackedTiles.contains(tileCoordinate))
-                    rectangle.setFill(markedAttackedPiece);
-
 
                 Pane tile = new Pane();
                 tile.getChildren().add(rectangle);
@@ -212,8 +165,11 @@ public class ChessBoardPanel {
         final int kingSideCastlingCoordinate = selectedPiece.getAlliance() == Alliance.WHITE ? 63 : 7;
         final int queenSideCastlingCoordinate = selectedPiece.getAlliance() == Alliance.WHITE ? 56 : 0;
 
-        if (promotionRow[destinationPosition] && selectedPiece.getPieceType() == PieceType.PAWN)
-            return new PromotionMove(board, selectedPiece, destinationPosition, null);
+        if (promotionRow[destinationPosition] && selectedPiece.getPieceType() == PieceType.PAWN) {
+            PromotionDialog.runPromotionDialog(selectedPiece.getAlliance().isWhite(), destinationPosition);
+            System.out.println(PromotionDialog.getPromotedPiece());
+            return new PromotionMove(board, selectedPiece, destinationPosition, PromotionDialog.getPromotedPiece());
+        }
         if (destinationTile.isTileOccupied())
             return new AttackMove(board, selectedPiece, destinationPosition, destinationTile.getPiece());
 

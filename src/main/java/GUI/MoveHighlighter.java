@@ -15,5 +15,58 @@
 
 package GUI;
 
+import classics.move.Move;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+
+import java.util.ArrayList;
+
 public class MoveHighlighter {
+    public static void markAllLegalSquares(final int piecePosition,
+                                            final ArrayList<Move> allPlayerPossibleLegalMoves,
+                                            final GridPane chessBoardPanel) {
+        final Color markedPosition = Color.BLUE;
+        final Color markedEmptySquare =Color.rgb(255, 242, 0, 0.5);
+        final Color markedAttackedPiece = Color.rgb(94, 13, 227, 0.3);
+
+        Rectangle rectangle;
+        ArrayList<Integer> markedTiles = new ArrayList<>();
+        ArrayList<Integer> markedAttackedTiles = new ArrayList<>();
+
+        boolean isWhiteCell = true;
+        int tileCoordinate;
+
+        for (Move markedMove : allPlayerPossibleLegalMoves) {
+            if (!(markedMove instanceof Move.AttackMove) && !(markedMove instanceof Move.EnPassantMove))
+                markedTiles.add(markedMove.destinationCoordinate);
+            else markedAttackedTiles.add(markedMove.destinationCoordinate);
+        }
+
+
+        for (int r = 0; r < 8; r++) {
+            for (int c = 0; c < 8; c++) {
+                rectangle = new Rectangle(100, 100);
+                rectangle.setFill(isWhiteCell ? Color.BEIGE : Color.BROWN);
+                tileCoordinate = r * 8 + c;
+
+                if (tileCoordinate == piecePosition)
+                    rectangle.setFill(markedPosition);
+                else if (markedTiles.contains(tileCoordinate))
+                    rectangle.setFill(markedEmptySquare);
+                else if (markedAttackedTiles.contains(tileCoordinate))
+                    rectangle.setFill(markedAttackedPiece);
+
+
+                Pane tile = new Pane();
+                tile.getChildren().add(rectangle);
+
+                chessBoardPanel.add(rectangle, c, r);
+
+                isWhiteCell = !isWhiteCell;
+            }
+            isWhiteCell = !isWhiteCell;
+        }
+    }
 }
