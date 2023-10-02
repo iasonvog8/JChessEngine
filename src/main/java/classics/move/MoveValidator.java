@@ -27,15 +27,14 @@ import java.util.ArrayList;
 
 public class MoveValidator {
     public static boolean isValidMove(final Move playerMove,
-                                      final Alliance isWhitePlayer,
+                                      final boolean isWhitePlayer,
                                       final Board board) {
-        ArrayList<Move> allPossiblePlayerMove = isWhitePlayer == Alliance.WHITE ? MoveGenerator.generateAllWhitePossibleMoves(board) :
+        ArrayList<Move> allPossiblePlayerMove = isWhitePlayer ? MoveGenerator.generateAllWhitePossibleMoves(board) :
                                                                 MoveGenerator.generateAllBlackPossibleMoves(board);
-
-        for (Move legalMove : allPossiblePlayerMove) {
-            if (legalMove.equals(playerMove))
-                System.out.println(legalMove + " " + playerMove);
-            if (legalMove.equals(playerMove)) return true;
+        if (isWhitePlayer == board.position.isWhiteTurn()) {
+            for (Move legalMove : allPossiblePlayerMove) {
+                if (legalMove.equals(playerMove)) return true;
+            }
         }
         return false;
     }

@@ -24,15 +24,26 @@ public enum Alliance {
         public verticalDirection getVerticalDirection() {
             return verticalDirection.DOWN;
         }
+
+        @Override
+        public boolean isWhite() {
+            return false;
+        }
     },
     WHITE {
         @Override
         public verticalDirection getVerticalDirection() {
             return verticalDirection.UP;
         }
+
+        @Override
+        public boolean isWhite() {
+            return true;
+        }
     };
 
     public abstract verticalDirection getVerticalDirection();
+    public abstract boolean isWhite();
     protected enum verticalDirection {
         DOWN {
             @Override

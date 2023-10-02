@@ -19,4 +19,14 @@ public class BlackPlayer extends Player{
             if (blackPiece.getPieceType() == PieceType.KING) return blackPiece;
         return null;
     }
+
+    @Override
+    public boolean isPlayerOnCheckMate() {
+        return false;
+    }
+
+    @Override
+    public boolean isPlayerOnDrawnStatement() {
+        return false;
+    }
 }

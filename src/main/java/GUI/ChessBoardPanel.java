@@ -40,8 +40,8 @@ import static classics.piece.Alliance.BLACK;
 import static classics.piece.Alliance.WHITE;
 
 public class ChessBoardPanel {
-    public static int selectedPiecePosition = -1;
-    public static int selectedDestinationCoordinate = -1;
+    private static int selectedPiecePosition = -1;
+    private static int selectedDestinationCoordinate = -1;
     public static GridPane createChessBoard(final Board board) {
         GridPane chessBoardPanel = new GridPane();
         chessBoardPanel.setGridLinesVisible(true);
@@ -70,7 +70,7 @@ public class ChessBoardPanel {
                     setPieces(chessBoardPanel, board, true);
                 } else if (selectedPiecePosition >= 0 && clickedRow * 8 + clickedColumn != selectedPiecePosition){
                     selectedDestinationCoordinate = clickedRow * 8 + clickedColumn;
-                    setMove(board, chessBoardPanel);
+                    setMove(board, chessBoardPanel, board.getTile(selectedPiecePosition).getPiece().getAlliance().isWhite());
 
                     System.out.println("Clicked cell: (" + clickedColumn + ", " + clickedRow + ", " + selectedDestinationCoordinate + ")");
 
@@ -153,7 +153,9 @@ public class ChessBoardPanel {
         }
     }
 
-    private static void setPieces(final GridPane graphicBoard, final Board board, final boolean markTiles) {
+    private static void setPieces(final GridPane graphicBoard,
+                                  final Board board,
+                                  final boolean markTiles) {
         ImageView[] allPiecesImage = PieceImageLoader.loadClassicBitSet();
         int piecePointer;
         board.displayBoard();
@@ -162,7 +164,7 @@ public class ChessBoardPanel {
             createBoard(graphicBoard);
 
         for (Piece piece : board.getAllPieces()) {
-            piecePointer = 0;
+            piecePointer = -1;
             switch (piece.getPieceType()) {
                 case KING -> piecePointer = 0;
                 case QUEEN -> piecePointer = 1;
@@ -184,18 +186,21 @@ public class ChessBoardPanel {
         }
     }
 
-    private static void setMove(final Board board, final GridPane graphicBoard) {
+    private static void setMove(final Board board, final GridPane graphicBoard, final boolean isWhitePiece) {
         if (selectedDestinationCoordinate != -1 && selectedPiecePosition != -1) {
             Move playerMove = calculateMoveType(board, selectedPiecePosition, selectedDestinationCoordinate);
 
-            if (MoveValidator.isValidMove(playerMove, WHITE, board)) {
+            if (MoveValidator.isValidMove(playerMove, isWhitePiece, board)) {
                 board.setMove(Objects.requireNonNull(playerMove));
                 setPieces(graphicBoard, board, false);
-            }
+                board.position.setWhiteTurn(!isWhitePiece);
+            }else setPieces(graphicBoard, board, false);
         }
     }
 
-    private static Move calculateMoveType(final Board board, final int currentPosition, final int destinationPosition) {
+    private static Move calculateMoveType(final Board board,
+                                          final int currentPosition,
+                                          final int destinationPosition) {
         final Piece selectedPiece = board.getTile(currentPosition).getPiece();
         final Tile destinationTile = board.getTile(destinationPosition);
         final Player player = selectedPiece.getAlliance() == WHITE ? board.whitePlayer : board.blackPlayer;

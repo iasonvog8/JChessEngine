@@ -30,4 +30,7 @@ public abstract class Player {
 
     abstract boolean isWhitePlayer();
     public abstract Piece estimateKingLocation(final Board board);
+    public abstract boolean isPlayerOnCheckMate();
+    public abstract boolean isPlayerOnDrawnStatement();
+
 }

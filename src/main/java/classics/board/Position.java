@@ -21,23 +21,46 @@
 package classics.board;
 
 public class Position {
-    protected boolean isWhiteTurn;
-    protected boolean kingSideCastling;
-    protected boolean queenSideCastling;
-    protected int enPassantTarget;
-    protected int halfMove;
-    protected int fullMove;
-    public Position(final boolean isWhiteTurn,
-                    final boolean kingSideCastling,
-                    final boolean queenSideCastling,
-                    final int enPassantTarget,
-                    final int halfMove, final int fullMove) {
-        this.isWhiteTurn = isWhiteTurn;
-        this.kingSideCastling = kingSideCastling;
-        this.queenSideCastling = queenSideCastling;
-        this.enPassantTarget = enPassantTarget;
-        this.halfMove = halfMove;
-        this.fullMove = fullMove;
+    private Board gamePosition;
+    private boolean isWhiteTurn;
+    private int halfMove;
+    private int fullMove;
+    public Position(final Board board) {
+        this.gamePosition = board;
+        this.isWhiteTurn = true;
+        this.halfMove = 0;
+        this.fullMove = 0;
     }
 
+    public Board getGamePosition() {
+        return gamePosition;
+    }
+
+    public void setGamePosition(Board gamePosition) {
+        this.gamePosition = gamePosition;
+    }
+
+    public boolean isWhiteTurn() {
+        return isWhiteTurn;
+    }
+
+    public void setWhiteTurn(boolean whiteTurn) {
+        isWhiteTurn = whiteTurn;
+    }
+
+    public int getHalfMove() {
+        return halfMove;
+    }
+
+    public void setHalfMove(int halfMove) {
+        this.halfMove = halfMove;
+    }
+
+    public int getFullMove() {
+        return fullMove;
+    }
+
+    public void setFullMove(int fullMove) {
+        this.fullMove = fullMove;
+    }
 }

@@ -20,4 +20,14 @@ public class WhitePlayer extends Player{
             if (whitePiece.getPieceType() == PieceType.KING) return whitePiece;
         return null;
     }
+
+    @Override
+    public boolean isPlayerOnCheckMate() {
+        return false;
+    }
+
+    @Override
+    public boolean isPlayerOnDrawnStatement() {
+        return false;
+    }
 }

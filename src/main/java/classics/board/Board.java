@@ -38,13 +38,15 @@ import static classics.move.Move.*;
 public class Board implements Cloneable{
     private Tile[] chessBoard;
     private HashMap<Integer, Piece> chessBoardPieces = new HashMap<>();
-    private int enPassantTarget = 0;
     public WhitePlayer whitePlayer;
     public BlackPlayer blackPlayer;
+    public Position position;
+    private int enPassantTarget = 0;
     public Board() {
         chessBoard = new Tile[BOARD_LENGTH];
         whitePlayer = new WhitePlayer();
         blackPlayer = new BlackPlayer();
+        position = new Position(this);
     }
 
     private void initBoard() {
