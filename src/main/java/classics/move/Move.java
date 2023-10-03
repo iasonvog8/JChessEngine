@@ -21,11 +21,12 @@
 package classics.move;
 
 import static classics.move.MoveGenerator.*;
+import static classics.piece.PieceType.KING;
+
 import classics.board.Board;
 import classics.piece.Alliance;
 import classics.piece.KingSafety;
 import classics.piece.Piece;
-import classics.piece.PieceType;
 
 import java.util.ArrayList;
 
@@ -206,79 +207,40 @@ public abstract class Move {
         }
         public void createMove(final Move createMove) {
             transitionBoard.setMove(createMove);
+            transitionBoard.displayBoard();
+            System.out.println("Create");
         }
 
         public void revokeMove(final Board revokeBoard) {
-            try {
-                transitionBoard = revokeBoard.clone();
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
+            transitionBoard = revokeBoard.clone();
+            transitionBoard.displayBoard();
+            transitionBoard.displayHashMap();
+            System.out.println("Revoke");
         }
 
         @Override
-        public boolean isOnCheck(final Move kingMove) {
-            try {
-                final Board copyBoard = kingMove.board.clone();
-                boolean isFirstMove = kingMove.movedPiece.isFirstMove();
-                createMove(kingMove);
+        public boolean isOnCheck(final Piece king) {
+            ArrayList<Move> allOpponentLegalMoves = king.getAlliance().isWhite() ?
+                    generateAllWhitePossibleMoves(transitionBoard) : generateAllBlackPossibleMoves(transitionBoard);
 
-                ArrayList<Move> allPossibleOpponentMoves = kingMove.movedPiece.getAlliance() == Alliance.WHITE ?
-                        generateAllBlackPossibleMoves(transitionBoard) : generateAllWhitePossibleMoves(transitionBoard);
+            for (Move attackerMove : allOpponentLegalMoves)
+                if (attackerMove.destinationCoordinate == king.getPieceCoordinate()) return true;
 
-                for (Move attackerMove : allPossibleOpponentMoves) {
-                    if (attackerMove instanceof AttackMove) {
-                        if (((AttackMove) attackerMove).attackedPiece.getPieceType() == PieceType.KING) {
-                            revokeMove(copyBoard);
-                            kingMove.movedPiece.setFirstMove(isFirstMove);
-                            return true;
-                        }
-                    }
-                }
-                kingMove.movedPiece.setFirstMove(isFirstMove);
-                revokeMove(copyBoard);
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
             return false;
         }
 
         @Override
         public ArrayList<Move> getBlockers(final Board board, final Piece king) {
             ArrayList<Move> allBlockersPossibleMoves = new ArrayList<>();
-            try {
-                Board copyBoard = board.clone();
-                ArrayList<Move> allPlayerLegalMoves = king.getAlliance() == Alliance.WHITE ?
-                        generateAllWhitePossibleMoves(copyBoard) : generateAllBlackPossibleMoves(copyBoard);
-                ArrayList<Move> allOpponentPossibleMoves;
+            ArrayList<Move> allPlayerLegalMoves = king.getAlliance().isWhite() ?
+                    generateAllWhitePossibleMoves(transitionBoard) : generateAllBlackPossibleMoves(transitionBoard);
 
-                boolean isKingSafe;
-                boolean isFirsMove;
-
-                for (Move blocker : allPlayerLegalMoves) {
-                    isFirsMove = blocker.movedPiece.isFirstMove();
-
-                    createMove(blocker);
-                    allOpponentPossibleMoves = king.getAlliance() == Alliance.BLACK ?
-                            generateAllWhitePossibleMoves(transitionBoard) : generateAllBlackPossibleMoves(transitionBoard);
-
-                    isKingSafe = true;
-                    for (Move attackerMove : allOpponentPossibleMoves) {
-                        if (attackerMove instanceof AttackMove) {
-                            System.out.println(attackerMove);
-                            if (((AttackMove) attackerMove).attackedPiece.getPieceType() == king.getPieceType()) {
-                                isKingSafe = false;
-                                break;
-                            }
-                        }
-                    }
-                    if (isKingSafe)
-                        allBlockersPossibleMoves.add(blocker);
-                    revokeMove(copyBoard);
-                    blocker.movedPiece.setFirstMove(isFirsMove);
+            for (Move transitionMove : allPlayerLegalMoves) {
+                if (transitionMove.movedPiece.getPieceType() != KING) {
+                    createMove(transitionMove);
+                    if (!isOnCheck(king)) allBlockersPossibleMoves.add(transitionMove);
+                    revokeMove(transitionMove.board.clone());
                 }
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
             }
             return allBlockersPossibleMoves;
         }
@@ -287,15 +249,18 @@ public abstract class Move {
         public boolean hasEscapeMoves(final Piece king) {
             ArrayList<Move> allKingPossibleMoves = king.calculateLegalSquares(transitionBoard);
 
-            for (Move kingTransitionMove : allKingPossibleMoves)
-                if (!isOnCheck(kingTransitionMove)) return true;
+            for (Move kingTransitionMove : allKingPossibleMoves) {
+                createMove(kingTransitionMove);
+                if (!isOnCheck(king)) return true;
+                revokeMove(kingTransitionMove.board.clone());
+            }
 
             return false;
         }
 
         @Override
         public boolean isDone(final Board board, final Piece king) {
-            return hasEscapeMoves(king) && !getBlockers(board, king).isEmpty() && !isOnCheck(new PrimaryMove(board, king, king.getPieceCoordinate()));
+            return !hasEscapeMoves(king) && getBlockers(board, king).isEmpty() && isOnCheck(king);
         }
     }
 

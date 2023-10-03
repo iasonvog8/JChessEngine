@@ -21,9 +21,7 @@
 package classics.board;
 
 import classics.move.Move;
-import classics.piece.Alliance;
 import classics.piece.Piece;
-import classics.piece.PieceType;
 import player.BlackPlayer;
 import player.WhitePlayer;
 
@@ -34,6 +32,7 @@ import java.util.HashMap;
 import static classics.board.BoardUtils.*;
 import static classics.board.Tile.*;
 import static classics.move.Move.*;
+import static classics.piece.PieceType.*;
 
 public class Board implements Cloneable{
     private Tile[] chessBoard;
@@ -68,11 +67,11 @@ public class Board implements Cloneable{
 
         if (move instanceof PrimaryMove || move instanceof AttackMove) {
             final int locationCoordinate = commutedPiece.getPieceCoordinate();
-            final boolean[] enPassantRow = commutedPiece.getAlliance() == Alliance.WHITE ? FIFTH_ROW : FOURTH_ROW;
+            final boolean[] enPassantRow = commutedPiece.getAlliance().isWhite() ? FIFTH_ROW : FOURTH_ROW;
 
-            if (commutedPiece.getPieceType() == PieceType.PAWN &&
+            if (commutedPiece.getPieceType() == PAWN &&
                     commutedPiece.isFirstMove() && enPassantRow[move.destinationCoordinate])
-                setEnPassantTarget(move.destinationCoordinate + (commutedPiece.getAlliance() == Alliance.WHITE ? 8 : -8));
+                setEnPassantTarget(move.destinationCoordinate + (commutedPiece.getAlliance().isWhite() ? 8 : -8));
 
             if (commutedPiece.isFirstMove())
                 commutedPiece.setFirstMove(false);
@@ -142,7 +141,7 @@ public class Board implements Cloneable{
         ArrayList<Piece> boardPieces = new ArrayList<>();
 
         for (Piece whitePiece : chessBoardPieces.values())
-            if (whitePiece.getAlliance() == Alliance.WHITE) boardPieces.add(whitePiece);
+            if (whitePiece.getAlliance().isWhite()) boardPieces.add(whitePiece);
 
         return boardPieces;
     }
@@ -151,7 +150,7 @@ public class Board implements Cloneable{
         ArrayList<Piece> boardPieces = new ArrayList<>();
 
         for (Piece blackPiece : chessBoardPieces.values())
-            if (blackPiece.getAlliance() == Alliance.BLACK) boardPieces.add(blackPiece);
+            if (!blackPiece.getAlliance().isWhite()) boardPieces.add(blackPiece);
 
         return boardPieces;
     }
@@ -162,6 +161,11 @@ public class Board implements Cloneable{
 
     public void setEnPassantTarget(int enPassantTarget) {
         this.enPassantTarget = enPassantTarget;
+    }
+
+    public void displayHashMap() {
+        for (Piece c : chessBoardPieces.values())
+            System.out.println(c);
     }
     public void displayBoard() {
         for (int sq = 0; sq < BOARD_LENGTH; sq++) {
@@ -186,8 +190,9 @@ public class Board implements Cloneable{
         }
         System.out.println("\n" + "+--".repeat(8) + "+");
     }
+
     @Override
-    public Board clone() throws CloneNotSupportedException {
+    public Board clone() {
         try {
 
             final Board clonedBoard = (Board) super.clone();

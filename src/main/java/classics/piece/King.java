@@ -65,31 +65,26 @@ public class King extends Piece {
         }
         if (isThereKingSideRook(board, getAlliance()) && isAvailableKingCorridor(board, getAlliance())) {
             if (Objects.requireNonNull(getKingSideRook(board, getAlliance())).isFirstMove() && this.isFirstMove()) {
-                /*
-                try {
-                    transitionMove = new TransitionMove(board.clone());
-                } catch (CloneNotSupportedException e) {
-                    throw new RuntimeException(e);
-                }
-                if (!transitionMove.isOnCheck(new PrimaryMove(board, this, kingSideCastlingCoordinate - 1)))
-                 */
+                transitionMove = new TransitionMove(board.clone());
+                transitionMove.createMove(new PrimaryMove(board, this, kingSideCastlingCoordinate - 1));
+                board.displayHashMap();
+
+                if (!transitionMove.isOnCheck(this))
                     allPossibleLegalMoves.add(new KingSideCastling(board, this, kingSideCastlingCoordinate - 1,
                             new PrimaryMove(board, getKingSideRook(board, getAlliance()), kingSideCastlingCoordinate - 2)));
+                transitionMove.revokeMove(board.clone());
             }
 
         }
         if (isThereQueenSideRook(board, getAlliance()) && isAvailableQueenCorridor(board, getAlliance())) {
             if (Objects.requireNonNull(getQueenSideRook(board, getAlliance())).isFirstMove() && this.isFirstMove()) {
-                /*
-                try {
-                    transitionMove = new TransitionMove(board.clone());
-                } catch (CloneNotSupportedException e) {
-                    throw new RuntimeException(e);
-                }
-                if (!transitionMove.isOnCheck(new PrimaryMove(board, this, queenSideCastlingCoordinate + 2)))
-                 */
+                transitionMove = new TransitionMove(board.clone());
+                transitionMove.createMove(new PrimaryMove(board, this, queenSideCastlingCoordinate + 2));
+
+                if (!transitionMove.isOnCheck(this))
                     allPossibleLegalMoves.add(new QueenSideCastling(board, this, queenSideCastlingCoordinate + 2,
                             new PrimaryMove(board, getQueenSideRook(board, getAlliance()), queenSideCastlingCoordinate + 3)));
+                transitionMove.revokeMove(board.clone());
             }
         }
 
