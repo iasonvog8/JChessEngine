@@ -25,7 +25,6 @@ import javafx.stage.Stage;
 public class ChessGUI extends Application {
     @Override
     public void start(Stage stage)  {
-        PromotionDialog.runPromotionDialog(true, 56);
         Board board = new Board();
         board.setBoard(ChessBitSet.classicBitSet());
 

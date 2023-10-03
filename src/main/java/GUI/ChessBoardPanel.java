@@ -166,9 +166,11 @@ public class ChessBoardPanel {
         final int queenSideCastlingCoordinate = selectedPiece.getAlliance() == Alliance.WHITE ? 56 : 0;
 
         if (promotionRow[destinationPosition] && selectedPiece.getPieceType() == PieceType.PAWN) {
+            PromotionMove promotionMove = new PromotionMove(board, selectedPiece, destinationPosition, null);
             PromotionDialog.runPromotionDialog(selectedPiece.getAlliance().isWhite(), destinationPosition);
-            System.out.println(PromotionDialog.getPromotedPiece());
-            return new PromotionMove(board, selectedPiece, destinationPosition, PromotionDialog.getPromotedPiece());
+
+            promotionMove.setPromotedPiece(PromotionDialog.getPromotedPiece());
+            return promotionMove;
         }
         if (destinationTile.isTileOccupied())
             return new AttackMove(board, selectedPiece, destinationPosition, destinationTile.getPiece());

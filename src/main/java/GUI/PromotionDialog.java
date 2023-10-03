@@ -22,7 +22,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 
 public class PromotionDialog {
@@ -92,7 +91,7 @@ public class PromotionDialog {
 
         primaryStage.setScene(dialogScene);
         primaryStage.setOnCloseRequest(Event::consume);
-        primaryStage.show();
+        primaryStage.showAndWait();
     }
 
     public static Piece getPromotedPiece() {

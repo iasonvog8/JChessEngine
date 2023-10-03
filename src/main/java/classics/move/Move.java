@@ -304,13 +304,17 @@ public abstract class Move {
         if (this == obj) {
             return true;
         }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
+
+        if (!(obj instanceof PromotionMove other)) {
+            Move other = (Move) obj;
+            return this.destinationCoordinate == other.destinationCoordinate
+                    && this.movedPiece == other.movedPiece
+                    && this.board == other.board;
         }
 
-        Move other = (Move) obj;
         return this.destinationCoordinate == other.destinationCoordinate
                 && this.movedPiece == other.movedPiece
-                && this.board == other.board;
+                && this.board == other.board
+                && null != other.promotedPiece;
     }
 }
