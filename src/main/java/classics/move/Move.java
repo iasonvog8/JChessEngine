@@ -234,7 +234,6 @@ public abstract class Move {
 
         @Override
         public ArrayList<Move> getBlockers(final Board board, final King king) {
-            System.out.println(1);
             ArrayList<Move> allBlockersPossibleMoves = new ArrayList<>();
             ArrayList<Move> allPlayerLegalMoves = king.getAlliance().isWhite() ?
                     generateAllWhitePossibleMoves(transitionBoard) : generateAllBlackPossibleMoves(transitionBoard);
@@ -243,9 +242,13 @@ public abstract class Move {
             boolean isFirstMove;
 
             for (Move transitionMove : allPlayerLegalMoves) {
+                if (king.getAlliance().isWhite())
+                    System.out.println(transitionMove);
+
                 if (transitionMove.movedPiece.getPieceType() != KING &&
                     !(transitionMove instanceof QueenSideCastling) &&
                     !(transitionMove instanceof KingSideCastling)) {
+
                     initialPosition = transitionMove.movedPiece.getPieceCoordinate();
                     isFirstMove = transitionMove.movedPiece.isFirstMove();
 
@@ -254,7 +257,6 @@ public abstract class Move {
                     revokeMove(transitionMove, transitionBoard, initialPosition, isFirstMove);
                 }
             }
-            System.out.println(allBlockersPossibleMoves.size());
             return allBlockersPossibleMoves;
         }
 

@@ -6,6 +6,7 @@ import classics.board.Board;
 import classics.move.Move;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Pawn extends Piece {
     private final int[] CANDIDATE_MOVE_DIRECTIONS = {16, 9, 8, 7};
@@ -20,7 +21,7 @@ public class Pawn extends Piece {
         int destinationCoordinate;
         int verticalDirectionOffSet = getAlliance().getVerticalDirection().getDirectionOffSet();
         int behindTile = -(8 * verticalDirectionOffSet);
-        int enPassantPawn = getAlliance().isWhite() ? -8 : 8;
+        int enPassantPawn = getAlliance().isWhite() ? 8 : -8;
 
         for (int directionOffSet : CANDIDATE_MOVE_DIRECTIONS) {
             destinationCoordinate = pieceCoordinate + (directionOffSet * verticalDirectionOffSet);
@@ -34,7 +35,7 @@ public class Pawn extends Piece {
                     !board.getTile(destinationCoordinate).isTileOccupied() &&
                     !board.getTile(destinationCoordinate + behindTile).isTileOccupied())
                 allPossibleLegalMoves.add(new PrimaryMove(board, this, destinationCoordinate));
-//left
+            //left
             else if ((directionOffSet * verticalDirectionOffSet == 7 || directionOffSet * verticalDirectionOffSet == -9) &&
                     isValidTile(destinationCoordinate) && !FIRST_COLUMN[pieceCoordinate]) {
                 if (board.getTile(destinationCoordinate).isTileOccupied() && board.getTile(destinationCoordinate).getPiece().getAlliance() !=
@@ -42,12 +43,12 @@ public class Pawn extends Piece {
                     allPossibleLegalMoves.add(new AttackMove(board, this, destinationCoordinate,
                             board.getTile(destinationCoordinate).getPiece()));
                 //en passant
-                else if (destinationCoordinate == board.getEnPassantTarget() &&
-                        board.getTile(board.getEnPassantTarget() + enPassantPawn).getPiece().getAlliance().isWhite() != this.getAlliance().isWhite())
+                else if (destinationCoordinate == board.getEnPassantTarget() && board.getTile(board.getEnPassantTarget() + enPassantPawn).getPiece() != null &&
+                        Objects.requireNonNull(board.getTile(board.getEnPassantTarget() + enPassantPawn)).getPiece().getAlliance().isWhite() != this.getAlliance().isWhite())
                     allPossibleLegalMoves.add(new EnPassantMove(board, this, destinationCoordinate,
                             board.getTile(pieceCoordinate - 1).getPiece()));
             }
-//right
+            //right
             else if ((directionOffSet * verticalDirectionOffSet == -7 || directionOffSet * verticalDirectionOffSet == 9) &&
                     isValidTile(destinationCoordinate) && !EIGHTH[pieceCoordinate]) {
                 if (board.getTile(destinationCoordinate).isTileOccupied() && board.getTile(destinationCoordinate).getPiece().getAlliance() !=
@@ -55,8 +56,8 @@ public class Pawn extends Piece {
                     allPossibleLegalMoves.add(new AttackMove(board, this, destinationCoordinate,
                             board.getTile(destinationCoordinate).getPiece()));
                 //en passant
-                else if (destinationCoordinate == board.getEnPassantTarget() &&
-                        board.getTile(board.getEnPassantTarget() + enPassantPawn).getPiece().getAlliance() != getAlliance())
+                else if (destinationCoordinate == board.getEnPassantTarget() && board.getTile(board.getEnPassantTarget() + enPassantPawn).getPiece() != null &&
+                        Objects.requireNonNull(board.getTile(board.getEnPassantTarget() + enPassantPawn)).getPiece().getAlliance() != getAlliance())
                     allPossibleLegalMoves.add(new EnPassantMove(board, this, destinationCoordinate,
                             board.getTile(pieceCoordinate + 1).getPiece()));
             }

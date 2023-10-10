@@ -140,15 +140,13 @@ public class ChessBoardPanel {
         if (selectedDestinationCoordinate != -1 && selectedPiecePosition != -1) {
             Move playerMove = calculateMoveType(board, selectedPiecePosition, selectedDestinationCoordinate);
 
-            if (!player.isPlayerOnCheckMate(board)) {
-                if (MoveValidator.isValidMove(playerMove, player, board)) {
-                    board.execute(Objects.requireNonNull(playerMove));
-                    setPieces(graphicBoard, board, false);
-                    board.position.setWhiteTurn(!player.isWhitePlayer());
+            if (MoveValidator.isValidMove(playerMove, player, board)) {
+                board.execute(Objects.requireNonNull(playerMove));
+                setPieces(graphicBoard, board, false);
+                board.position.setWhiteTurn(!player.isWhitePlayer());
 
-                    board.displayBoard();
-                } else setPieces(graphicBoard, board, false);
-            }
+                board.displayBoard();
+            } else setPieces(graphicBoard, board, false);
         }
     }
 

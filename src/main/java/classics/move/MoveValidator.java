@@ -33,6 +33,7 @@ public class MoveValidator {
                                       final Board board) {
         ArrayList<Move> allPossiblePlayerMove = player.isWhitePlayer() ? MoveGenerator.generateAllWhitePossibleMoves(board) :
                                                                 MoveGenerator.generateAllBlackPossibleMoves(board);
+
         if (!player.isPlayerInCheck(board)) {
             if (player.isWhitePlayer() == board.position.isWhiteTurn()) {
                 for (Move legalMove : allPossiblePlayerMove) {
@@ -52,6 +53,7 @@ public class MoveValidator {
                 }
             }
         }
+
         return false;
     }
 
