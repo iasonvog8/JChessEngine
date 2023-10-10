@@ -30,6 +30,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import player.Player;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import static classics.move.Move.*;
@@ -69,10 +70,7 @@ public class ChessBoardPanel {
                     setPieces(chessBoardPanel, board, true);
                 } else if (selectedPiecePosition >= 0 && clickedRow * 8 + clickedColumn != selectedPiecePosition){
                     selectedDestinationCoordinate = clickedRow * 8 + clickedColumn;
-                    setMove(board, chessBoardPanel, board.getTile(selectedPiecePosition).getPiece().getAlliance().isWhite());
-
-                    System.out.println("Clicked cell: (" + clickedColumn + ", " + clickedRow + ", " + selectedDestinationCoordinate + ")");
-
+                    executeMove(board, chessBoardPanel, board.position.isWhiteTurn() ? board.whitePlayer : board.blackPlayer);
                     resetSelectedTiles();
                 }else {
                     resetSelectedTiles();
@@ -111,7 +109,6 @@ public class ChessBoardPanel {
                                   final boolean markTiles) {
         ImageView[] allPiecesImage = PieceImageLoader.loadClassicBitSet();
         int piecePointer;
-        board.displayBoard();
 
         if (!markTiles)
             createBoard(graphicBoard);
@@ -139,15 +136,19 @@ public class ChessBoardPanel {
         }
     }
 
-    private static void setMove(final Board board, final GridPane graphicBoard, final boolean isWhitePiece) {
+    private static void executeMove(final Board board, final GridPane graphicBoard, final Player player) {
         if (selectedDestinationCoordinate != -1 && selectedPiecePosition != -1) {
             Move playerMove = calculateMoveType(board, selectedPiecePosition, selectedDestinationCoordinate);
 
-            if (MoveValidator.isValidMove(playerMove, isWhitePiece, board)) {
-                board.setMove(Objects.requireNonNull(playerMove));
-                setPieces(graphicBoard, board, false);
-                board.position.setWhiteTurn(!isWhitePiece);
-            }else setPieces(graphicBoard, board, false);
+            if (!player.isPlayerOnCheckMate(board)) {
+                if (MoveValidator.isValidMove(playerMove, player, board)) {
+                    board.execute(Objects.requireNonNull(playerMove));
+                    setPieces(graphicBoard, board, false);
+                    board.position.setWhiteTurn(!player.isWhitePlayer());
+
+                    board.displayBoard();
+                } else setPieces(graphicBoard, board, false);
+            }
         }
     }
 

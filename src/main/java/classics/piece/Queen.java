@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import static classics.board.BoardUtils.*;
 
-public class Queen extends Piece{
+public class Queen extends Piece {
     private final int[] CANDIDATE_MOVE_DIRECTIONS = {-9, -8, -7, -1, 1, 7, 8, 9};
     public Queen(final int coordinate, final Alliance alliance) {
         super(coordinate, alliance, PieceType.QUEEN);

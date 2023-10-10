@@ -26,7 +26,7 @@ public class ChessGUI extends Application {
     @Override
     public void start(Stage stage)  {
         Board board = new Board();
-        board.setBoard(ChessBitSet.classicBitSet());
+        board.buildBoard(ChessBitSet.classicBitSet());
 
         GridPane chessBoard = ChessBoardPanel.createChessBoard(board);
         chessBoard.setMaxHeight(800);

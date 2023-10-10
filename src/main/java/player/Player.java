@@ -19,7 +19,7 @@
 package player;
 
 import classics.board.Board;
-import classics.piece.Piece;
+import classics.piece.King;
 
 public abstract class Player {
 
@@ -28,9 +28,10 @@ public abstract class Player {
 
     }
 
-    abstract boolean isWhitePlayer();
-    public abstract Piece estimateKingLocation(final Board board);
-    public abstract boolean isPlayerOnCheckMate();
+    public abstract boolean isWhitePlayer();
+    public abstract King estimateKingLocation(final Board board);
+    public abstract boolean isPlayerOnCheckMate(final Board board);
+    public abstract boolean isPlayerInCheck(final Board board);
     public abstract boolean isPlayerOnDrawnStatement();
 
 }

@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 public interface KingSafety {
 
-     boolean isOnCheck(final Piece king);
-     ArrayList<Move> getBlockers(final Board board, final Piece king);
-     boolean hasEscapeMoves(final Piece king);
-     boolean isDone(final Board board, final Piece king);
+     boolean isKingInCheck(final King king);
+     ArrayList<Move> getBlockers(final Board board, final King king);
+     boolean hasEscapeMoves(final King king);
+     boolean isDone(final Board board, final King king);
 }

@@ -22,14 +22,14 @@ package classics.board;
 import classics.piece.Piece;
 
 public abstract class Tile {
-    int coordinate;
+    public final int coordinate;
     Tile (int coordinate) {
         this.coordinate = coordinate;
     }
     abstract public boolean isTileOccupied();
     abstract public Piece getPiece();
 
-    public static class EmptyTile extends Tile{
+    public static class EmptyTile extends Tile {
         public EmptyTile(int coordinate) {
             super(coordinate);
         }
@@ -43,9 +43,14 @@ public abstract class Tile {
         public Piece getPiece() {
             return null;
         }
+
+        @Override
+        public String toString() {
+            return "E";
+        }
     }
 
-    public static class OccupiedTile extends Tile{
+    public static class OccupiedTile extends Tile {
         Piece tilePiece;
         public OccupiedTile(int coordinate, Piece tilePiece) {
             super(coordinate);
@@ -60,6 +65,11 @@ public abstract class Tile {
         @Override
         public Piece getPiece() {
             return tilePiece;
+        }
+
+        @Override
+        public String toString() {
+            return "O";
         }
     }
 

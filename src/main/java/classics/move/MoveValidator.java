@@ -21,18 +21,35 @@
 package classics.move;
 
 import classics.board.Board;
+import player.Player;
 
 import java.util.ArrayList;
 
+import static classics.move.Move.*;
+
 public class MoveValidator {
     public static boolean isValidMove(final Move playerMove,
-                                      final boolean isWhitePlayer,
+                                      final Player player,
                                       final Board board) {
-        ArrayList<Move> allPossiblePlayerMove = isWhitePlayer ? MoveGenerator.generateAllWhitePossibleMoves(board) :
+        ArrayList<Move> allPossiblePlayerMove = player.isWhitePlayer() ? MoveGenerator.generateAllWhitePossibleMoves(board) :
                                                                 MoveGenerator.generateAllBlackPossibleMoves(board);
-        if (isWhitePlayer == board.position.isWhiteTurn()) {
-            for (Move legalMove : allPossiblePlayerMove) {
-                if (legalMove.equals(playerMove)) return true;
+        if (!player.isPlayerInCheck(board)) {
+            if (player.isWhitePlayer() == board.position.isWhiteTurn()) {
+                for (Move legalMove : allPossiblePlayerMove) {
+                    if (legalMove.equals(playerMove)) return true;
+                }
+            }
+        } else {
+            TransitionMove transitionMove = new Move.TransitionMove(board);
+            ArrayList<Move> safeMoves = transitionMove.getBlockers(board, player.estimateKingLocation(board));
+
+            if (transitionMove.hasEscapeMoves(player.estimateKingLocation(board)))
+                safeMoves.addAll(player.estimateKingLocation(board).calculateLegalSquares(board));
+
+            if (player.isWhitePlayer() == board.position.isWhiteTurn()){
+                for (Move safeMove : safeMoves) {
+                    if (safeMove.equals(playerMove)) return true;
+                }
             }
         }
         return false;

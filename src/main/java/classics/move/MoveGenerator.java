@@ -21,6 +21,7 @@ package classics.move;
 
 import classics.board.Board;
 import classics.piece.Piece;
+import classics.piece.PieceType;
 
 import java.util.ArrayList;
 
@@ -44,9 +45,32 @@ public class MoveGenerator {
     }
     public static ArrayList<Move> generateAllWhitePossibleMoves(final Board board) {
         ArrayList<Move> generateMoves = new ArrayList<>();
-
         for (Piece piece : board.getAllWhitePieces())
             generateMoves.addAll(piece.calculateLegalSquares(board));
+
+        return generateMoves;
+    }
+
+    public static ArrayList<Move> generateAllBlackMovesExceptKing(final Board board) {
+        ArrayList<Move> generateMoves = new ArrayList<>();
+
+        for (Piece piece : board.getAllBlackPieces()) {
+            if (piece.getPieceType() != PieceType.KING )
+                generateMoves.addAll(piece.calculateLegalSquares(board));
+            else if (piece.getAlliance().isWhite()) generateMoves.addAll(piece.calculateLegalSquares(board));
+        }
+
+        return generateMoves;
+    }
+
+    public static ArrayList<Move> generateAllWhiteMovesExceptKing(final Board board) {
+        ArrayList<Move> generateMoves = new ArrayList<>();
+
+        for (Piece piece : board.getAllWhitePieces()) {
+            if (piece.getPieceType() != PieceType.KING)
+                generateMoves.addAll(piece.calculateLegalSquares(board));
+            else if (!piece.getAlliance().isWhite()) generateMoves.addAll(piece.calculateLegalSquares(board));
+        }
 
         return generateMoves;
     }

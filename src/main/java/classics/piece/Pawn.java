@@ -7,7 +7,7 @@ import classics.move.Move;
 
 import java.util.ArrayList;
 
-public class Pawn extends Piece{
+public class Pawn extends Piece {
     private final int[] CANDIDATE_MOVE_DIRECTIONS = {16, 9, 8, 7};
     public Pawn(final int coordinate, final Alliance alliance) {
         super(coordinate, alliance, PieceType.PAWN);
@@ -16,10 +16,11 @@ public class Pawn extends Piece{
     @Override
     public ArrayList<Move> calculateLegalSquares(final Board board) {
         ArrayList<Move> allPossibleLegalMoves = new ArrayList<>();
-        boolean[] promotionRow = getAlliance() == Alliance.WHITE ? FIRST_ROW : EIGHTH_ROW;
+        boolean[] promotionRow = getAlliance().isWhite() ? FIRST_ROW : EIGHTH_ROW;
         int destinationCoordinate;
         int verticalDirectionOffSet = getAlliance().getVerticalDirection().getDirectionOffSet();
         int behindTile = -(8 * verticalDirectionOffSet);
+        int enPassantPawn = getAlliance().isWhite() ? -8 : 8;
 
         for (int directionOffSet : CANDIDATE_MOVE_DIRECTIONS) {
             destinationCoordinate = pieceCoordinate + (directionOffSet * verticalDirectionOffSet);
@@ -41,7 +42,8 @@ public class Pawn extends Piece{
                     allPossibleLegalMoves.add(new AttackMove(board, this, destinationCoordinate,
                             board.getTile(destinationCoordinate).getPiece()));
                 //en passant
-                else if (destinationCoordinate == board.getEnPassantTarget())
+                else if (destinationCoordinate == board.getEnPassantTarget() &&
+                        board.getTile(board.getEnPassantTarget() + enPassantPawn).getPiece().getAlliance().isWhite() != this.getAlliance().isWhite())
                     allPossibleLegalMoves.add(new EnPassantMove(board, this, destinationCoordinate,
                             board.getTile(pieceCoordinate - 1).getPiece()));
             }
@@ -53,7 +55,8 @@ public class Pawn extends Piece{
                     allPossibleLegalMoves.add(new AttackMove(board, this, destinationCoordinate,
                             board.getTile(destinationCoordinate).getPiece()));
                 //en passant
-                else if (destinationCoordinate == board.getEnPassantTarget())
+                else if (destinationCoordinate == board.getEnPassantTarget() &&
+                        board.getTile(board.getEnPassantTarget() + enPassantPawn).getPiece().getAlliance() != getAlliance())
                     allPossibleLegalMoves.add(new EnPassantMove(board, this, destinationCoordinate,
                             board.getTile(pieceCoordinate + 1).getPiece()));
             }
@@ -61,5 +64,4 @@ public class Pawn extends Piece{
 
         return allPossibleLegalMoves;
     }
-
 }

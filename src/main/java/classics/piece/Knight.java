@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import static classics.board.BoardUtils.*;
 import static classics.move.Move.*;
 
-public class Knight extends Piece{
+public class Knight extends Piece {
     private final int[] CANDIDATE_MOVE_DIRECTIONS = {-17, -15, -10, -6, 6, 10, 15, 17};
     public Knight(final int coordinate, final Alliance alliance) {
         super(coordinate, alliance, PieceType.KNIGHT);

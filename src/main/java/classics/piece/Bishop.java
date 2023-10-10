@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import static classics.board.BoardUtils.*;
 import static classics.move.Move.*;
 
-public class Bishop extends Piece{
+public class Bishop extends Piece {
     private final int[] CANDIDATE_DIRECTIONS = {-9, -7, 7, 9};
     public Bishop(final int coordinate, final Alliance alliance) {
         super(coordinate, alliance, PieceType.BISHOP);

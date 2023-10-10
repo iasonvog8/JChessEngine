@@ -26,11 +26,11 @@ import classics.move.Move;
 
 import java.util.ArrayList;
 
-public abstract class Piece {
+public abstract class Piece implements Cloneable {
      protected int pieceCoordinate;
-     private Alliance alliance;
-     private PieceType pieceType;
-     private boolean isFirstMove;
+     protected Alliance alliance;
+     protected PieceType pieceType;
+     protected boolean isFirstMove;
 
      public Piece(final int pieceCoordinate, final Alliance alliance, final PieceType pieceType) {
           this.pieceCoordinate = pieceCoordinate;
@@ -68,6 +68,19 @@ public abstract class Piece {
 
      public void setFirstMove(boolean firstMove) {
           isFirstMove = firstMove;
+     }
+
+     @Override
+     public Piece clone() {
+          try {
+              Piece clonedPiece = (Piece) super.clone();
+              clonedPiece.pieceType = this.pieceType;
+              clonedPiece.isFirstMove = this.isFirstMove;
+              clonedPiece.pieceCoordinate = this.pieceCoordinate;
+               return clonedPiece;
+          } catch (CloneNotSupportedException e) {
+               throw new RuntimeException(e);
+          }
      }
 
      @Override

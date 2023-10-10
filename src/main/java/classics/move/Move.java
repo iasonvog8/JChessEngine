@@ -22,11 +22,10 @@ package classics.move;
 
 import static classics.move.MoveGenerator.*;
 import static classics.piece.PieceType.KING;
+import static classics.board.Tile.*;
 
 import classics.board.Board;
-import classics.piece.Alliance;
-import classics.piece.KingSafety;
-import classics.piece.Piece;
+import classics.piece.*;
 
 import java.util.ArrayList;
 
@@ -206,22 +205,26 @@ public abstract class Move {
             this.transitionBoard = transitionBoard;
         }
         public void createMove(final Move createMove) {
-            transitionBoard.setMove(createMove);
-            transitionBoard.displayBoard();
-            System.out.println("Create");
+            transitionBoard.execute(createMove);
         }
 
-        public void revokeMove(final Board revokeBoard) {
-            transitionBoard = revokeBoard.clone();
-            transitionBoard.displayBoard();
-            transitionBoard.displayHashMap();
-            System.out.println("Revoke");
+        public void revokeMove(final Move revokeMove, final Board board, final int initialPosition, final boolean isFirstMove) {
+            board.execute(new PrimaryMove(board, revokeMove.movedPiece, initialPosition));
+            revokeMove.movedPiece.setFirstMove(isFirstMove);
+
+            if (revokeMove instanceof AttackMove) {
+                int revokedAttackedPieceCoordinate = ((AttackMove) revokeMove).attackedPiece.getPieceCoordinate();
+                board.setTile(revokedAttackedPieceCoordinate, new OccupiedTile(revokedAttackedPieceCoordinate, ((AttackMove) revokeMove).attackedPiece));
+            }else if (revokeMove instanceof EnPassantMove) {
+                int revokedAttackedPieceCoordinate = ((EnPassantMove) revokeMove).attackedPawn.getPieceCoordinate();
+                board.setTile(revokedAttackedPieceCoordinate, new OccupiedTile(revokedAttackedPieceCoordinate, ((EnPassantMove) revokeMove).attackedPawn));
+            }
         }
 
         @Override
-        public boolean isOnCheck(final Piece king) {
-            ArrayList<Move> allOpponentLegalMoves = king.getAlliance().isWhite() ?
-                    generateAllWhitePossibleMoves(transitionBoard) : generateAllBlackPossibleMoves(transitionBoard);
+        public boolean isKingInCheck(final King king) {
+            ArrayList<Move> allOpponentLegalMoves = !king.getAlliance().isWhite() ?
+                    generateAllWhiteMovesExceptKing(transitionBoard) : generateAllBlackMovesExceptKing(transitionBoard);
 
             for (Move attackerMove : allOpponentLegalMoves)
                 if (attackerMove.destinationCoordinate == king.getPieceCoordinate()) return true;
@@ -230,37 +233,55 @@ public abstract class Move {
         }
 
         @Override
-        public ArrayList<Move> getBlockers(final Board board, final Piece king) {
+        public ArrayList<Move> getBlockers(final Board board, final King king) {
+            System.out.println(1);
             ArrayList<Move> allBlockersPossibleMoves = new ArrayList<>();
             ArrayList<Move> allPlayerLegalMoves = king.getAlliance().isWhite() ?
                     generateAllWhitePossibleMoves(transitionBoard) : generateAllBlackPossibleMoves(transitionBoard);
 
+            int initialPosition;
+            boolean isFirstMove;
+
             for (Move transitionMove : allPlayerLegalMoves) {
-                if (transitionMove.movedPiece.getPieceType() != KING) {
+                if (transitionMove.movedPiece.getPieceType() != KING &&
+                    !(transitionMove instanceof QueenSideCastling) &&
+                    !(transitionMove instanceof KingSideCastling)) {
+                    initialPosition = transitionMove.movedPiece.getPieceCoordinate();
+                    isFirstMove = transitionMove.movedPiece.isFirstMove();
+
                     createMove(transitionMove);
-                    if (!isOnCheck(king)) allBlockersPossibleMoves.add(transitionMove);
-                    revokeMove(transitionMove.board.clone());
+                    if (!isKingInCheck(king)) allBlockersPossibleMoves.add(transitionMove);
+                    revokeMove(transitionMove, transitionBoard, initialPosition, isFirstMove);
                 }
             }
+            System.out.println(allBlockersPossibleMoves.size());
             return allBlockersPossibleMoves;
         }
 
         @Override
-        public boolean hasEscapeMoves(final Piece king) {
+        public boolean hasEscapeMoves(final King king) {
             ArrayList<Move> allKingPossibleMoves = king.calculateLegalSquares(transitionBoard);
+            int initialPosition;
+            boolean isFirstMove;
 
             for (Move kingTransitionMove : allKingPossibleMoves) {
+                initialPosition = kingTransitionMove.movedPiece.getPieceCoordinate();
+                isFirstMove = kingTransitionMove.movedPiece.isFirstMove();
+
                 createMove(kingTransitionMove);
-                if (!isOnCheck(king)) return true;
-                revokeMove(kingTransitionMove.board.clone());
+                if (!isKingInCheck(king)) {
+                    revokeMove(kingTransitionMove, transitionBoard, initialPosition, isFirstMove);
+                    return true;
+                }
+                revokeMove(kingTransitionMove, transitionBoard, initialPosition, isFirstMove);
             }
 
             return false;
         }
 
         @Override
-        public boolean isDone(final Board board, final Piece king) {
-            return !hasEscapeMoves(king) && getBlockers(board, king).isEmpty() && isOnCheck(king);
+        public boolean isDone(final Board board, final King king) {
+            return !hasEscapeMoves(king) && getBlockers(board, king).isEmpty() && isKingInCheck(king);
         }
     }
 

@@ -7,7 +7,7 @@ import classics.move.Move;
 
 import java.util.ArrayList;
 
-public class Rook extends Piece{
+public class Rook extends Piece {
     private final int[] CANDIDATE_MOVE_DIRECTIONS = {-8, -1, 1, 8};
     public Rook(final int coordinate, final Alliance alliance) {
         super(coordinate, alliance, PieceType.ROOK);
