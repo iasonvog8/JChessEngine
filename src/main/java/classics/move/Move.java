@@ -218,6 +218,9 @@ public abstract class Move {
             }else if (revokeMove instanceof EnPassantMove) {
                 int revokedAttackedPieceCoordinate = ((EnPassantMove) revokeMove).attackedPawn.getPieceCoordinate();
                 board.setTile(revokedAttackedPieceCoordinate, new OccupiedTile(revokedAttackedPieceCoordinate, ((EnPassantMove) revokeMove).attackedPawn));
+            } else if (revokeMove instanceof PromotionMove) {
+                int promotedPieceCoordinate = ((PromotionMove) revokeMove).promotedPiece.getPieceCoordinate();
+                board.setTile(promotedPieceCoordinate, new EmptyTile(promotedPieceCoordinate));
             }
         }
 
@@ -242,9 +245,6 @@ public abstract class Move {
             boolean isFirstMove;
 
             for (Move transitionMove : allPlayerLegalMoves) {
-                if (king.getAlliance().isWhite())
-                    System.out.println(transitionMove);
-
                 if (transitionMove.movedPiece.getPieceType() != KING &&
                     !(transitionMove instanceof QueenSideCastling) &&
                     !(transitionMove instanceof KingSideCastling)) {

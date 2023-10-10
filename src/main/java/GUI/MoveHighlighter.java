@@ -15,33 +15,44 @@
 
 package GUI;
 
+import classics.board.Board;
 import classics.move.Move;
+import classics.move.MoveValidator;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import player.Player;
 
 import java.util.ArrayList;
 
 public class MoveHighlighter {
     public static void markAllLegalSquares(final int piecePosition,
-                                            final ArrayList<Move> allPlayerPossibleLegalMoves,
-                                            final GridPane chessBoardPanel) {
+                                           final ArrayList<Move> allPiecePossibleLegalMoves,
+                                           final GridPane chessBoardPanel,
+                                           final Player player,
+                                           final Board board) {
         final Color markedPosition = Color.BLUE;
         final Color markedEmptySquare =Color.rgb(255, 242, 0, 0.5);
         final Color markedAttackedPiece = Color.rgb(94, 13, 227, 0.3);
+        final Color kingInCheck = Color.rgb(231, 8, 8, 0.5);
 
         Rectangle rectangle;
         ArrayList<Integer> markedTiles = new ArrayList<>();
         ArrayList<Integer> markedAttackedTiles = new ArrayList<>();
 
         boolean isWhiteCell = true;
+        int kingCoordinate = -1;
         int tileCoordinate;
 
-        for (Move markedMove : allPlayerPossibleLegalMoves) {
-            if (!(markedMove instanceof Move.AttackMove) && !(markedMove instanceof Move.EnPassantMove))
-                markedTiles.add(markedMove.destinationCoordinate);
-            else markedAttackedTiles.add(markedMove.destinationCoordinate);
+        for (Move markedMove : allPiecePossibleLegalMoves) {
+            if (MoveValidator.isValidMove(markedMove, player, board)) {
+                if (!(markedMove instanceof Move.AttackMove) && !(markedMove instanceof Move.EnPassantMove))
+                    markedTiles.add(markedMove.destinationCoordinate);
+                else markedAttackedTiles.add(markedMove.destinationCoordinate);
+            }
+            if (player.isPlayerOnCheckMate(board) || player.isPlayerInCheck(board))
+                kingCoordinate = player.estimateKingLocation(board).getPieceCoordinate();
         }
 
 
@@ -57,6 +68,9 @@ public class MoveHighlighter {
                     rectangle.setFill(markedEmptySquare);
                 else if (markedAttackedTiles.contains(tileCoordinate))
                     rectangle.setFill(markedAttackedPiece);
+                else if (tileCoordinate == kingCoordinate) {
+                    rectangle.setFill(kingInCheck);
+                }
 
 
                 Pane tile = new Pane();

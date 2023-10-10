@@ -30,7 +30,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import player.Player;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 import static classics.move.Move.*;
@@ -64,13 +63,14 @@ public class ChessBoardPanel {
             }
 
             if (clickedColumn != -1 && clickedRow != -1) {
+                Player player = board.position.isWhiteTurn() ? board.whitePlayer : board.blackPlayer;
                 if (selectedPiecePosition == -1 && board.getTile(clickedRow * 8 + clickedColumn).isTileOccupied()) {
                     selectedPiecePosition = clickedRow * 8 + clickedColumn;
-                    markAllLegalSquares(selectedPiecePosition, board.getTile(selectedPiecePosition).getPiece().calculateLegalSquares(board), chessBoardPanel);
+                    markAllLegalSquares(selectedPiecePosition, board.getTile(selectedPiecePosition).getPiece().calculateLegalSquares(board), chessBoardPanel, player, board);
                     setPieces(chessBoardPanel, board, true);
                 } else if (selectedPiecePosition >= 0 && clickedRow * 8 + clickedColumn != selectedPiecePosition){
                     selectedDestinationCoordinate = clickedRow * 8 + clickedColumn;
-                    executeMove(board, chessBoardPanel, board.position.isWhiteTurn() ? board.whitePlayer : board.blackPlayer);
+                    executeMove(board, chessBoardPanel, player);
                     resetSelectedTiles();
                 }else {
                     resetSelectedTiles();

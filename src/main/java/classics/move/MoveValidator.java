@@ -36,12 +36,22 @@ public class MoveValidator {
 
         if (!player.isPlayerInCheck(board)) {
             if (player.isWhitePlayer() == board.position.isWhiteTurn()) {
+                TransitionMove transitionMove = new TransitionMove(board);
+
                 for (Move legalMove : allPossiblePlayerMove) {
-                    if (legalMove.equals(playerMove)) return true;
+                    int initialPosition = legalMove.movedPiece.getPieceCoordinate();
+                    boolean firstMove = legalMove.movedPiece.isFirstMove();
+
+                    transitionMove.createMove(legalMove);
+                    if (legalMove.equals(playerMove) && !transitionMove.isKingInCheck(player.estimateKingLocation(board))) {
+                        transitionMove.revokeMove(legalMove, board, initialPosition, firstMove);
+                        return true;
+                    }
+                    transitionMove.revokeMove(legalMove, board, initialPosition, firstMove);
                 }
             }
         } else {
-            TransitionMove transitionMove = new Move.TransitionMove(board);
+            TransitionMove transitionMove = new TransitionMove(board);
             ArrayList<Move> safeMoves = transitionMove.getBlockers(board, player.estimateKingLocation(board));
 
             if (transitionMove.hasEscapeMoves(player.estimateKingLocation(board)))
