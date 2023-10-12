@@ -26,15 +26,6 @@ import classics.piece.PieceType;
 import java.util.ArrayList;
 
 public class MoveGenerator {
-
-    public static ArrayList<Move> generateAllPossibleMoves(final Board board) {
-        ArrayList<Move> generateMoves = new ArrayList<>();
-
-        for (Piece piece : board.getAllPieces())
-            generateMoves.addAll(piece.calculateLegalSquares(board));
-
-        return generateMoves;
-    }
     public static ArrayList<Move> generateAllBlackPossibleMoves(final Board board) {
         ArrayList<Move> generateMoves = new ArrayList<>();
 

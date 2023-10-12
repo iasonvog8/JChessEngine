@@ -32,6 +32,6 @@ public abstract class Player {
     public abstract King estimateKingLocation(final Board board);
     public abstract boolean isPlayerOnCheckMate(final Board board);
     public abstract boolean isPlayerInCheck(final Board board);
-    public abstract boolean isPlayerOnDrawnStatement();
+    public abstract boolean isPlayerOnDrawnStatement(final Board board);
 
 }

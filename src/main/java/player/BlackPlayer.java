@@ -1,9 +1,14 @@
 package player;
 
 import classics.board.Board;
+import classics.move.Move;
+import classics.move.MoveGenerator;
+import classics.move.MoveValidator;
 import classics.piece.King;
 import classics.piece.Piece;
 import classics.piece.PieceType;
+
+import java.util.ArrayList;
 
 import static classics.move.Move.*;
 
@@ -37,7 +42,12 @@ public class BlackPlayer extends Player{
     }
 
     @Override
-    public boolean isPlayerOnDrawnStatement() {
-        return false;
+    public boolean isPlayerOnDrawnStatement(final Board board) {
+        ArrayList<Move> legalMoves = MoveGenerator.generateAllBlackPossibleMoves(board);
+        for (Move drawnMove : legalMoves)
+            if (MoveValidator.isValidMove(drawnMove, board.blackPlayer, board)) return false;
+
+        TransitionMove transitionMove = new TransitionMove(board);
+        return !transitionMove.hasEscapeMoves(estimateKingLocation(board));
     }
 }

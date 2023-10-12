@@ -48,8 +48,8 @@ public class MoveHighlighter {
         for (Move markedMove : allPiecePossibleLegalMoves) {
             if (MoveValidator.isValidMove(markedMove, player, board)) {
                 if (!(markedMove instanceof Move.AttackMove) && !(markedMove instanceof Move.EnPassantMove))
-                    markedTiles.add(markedMove.destinationCoordinate);
-                else markedAttackedTiles.add(markedMove.destinationCoordinate);
+                    markedTiles.add(markedMove.getDestinationCoordinate());
+                else markedAttackedTiles.add(markedMove.getDestinationCoordinate());
             }
             if (player.isPlayerOnCheckMate(board) || player.isPlayerInCheck(board))
                 kingCoordinate = player.estimateKingLocation(board).getPieceCoordinate();

@@ -21,8 +21,8 @@
 package classics.move;
 
 import static classics.move.MoveGenerator.*;
-import static classics.piece.PieceType.KING;
 import static classics.board.Tile.*;
+import static classics.piece.PieceType.KING;
 
 import classics.board.Board;
 import classics.piece.*;
@@ -30,9 +30,9 @@ import classics.piece.*;
 import java.util.ArrayList;
 
 public abstract class Move {
-    public final Board board;
-    public final Piece movedPiece;
-    public final int destinationCoordinate;
+    protected final Board board;
+    protected final Piece movedPiece;
+    protected final int destinationCoordinate;
 
     protected Move(final Board board,
                    final Piece movedPiece,
@@ -41,6 +41,19 @@ public abstract class Move {
         this.movedPiece = movedPiece;
         this.destinationCoordinate = destinationCoordinate;
     }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public Piece getMovedPiece() {
+        return movedPiece;
+    }
+
+    public int getDestinationCoordinate() {
+        return destinationCoordinate;
+    }
+
     public static class PrimaryMove extends Move { // or MajorMove
         public PrimaryMove(final Board board,
                            final Piece movedPiece,
@@ -246,8 +259,8 @@ public abstract class Move {
 
             for (Move transitionMove : allPlayerLegalMoves) {
                 if (transitionMove.movedPiece.getPieceType() != KING &&
-                    !(transitionMove instanceof QueenSideCastling) &&
-                    !(transitionMove instanceof KingSideCastling)) {
+                        !(transitionMove instanceof QueenSideCastling) &&
+                        !(transitionMove instanceof KingSideCastling)) {
 
                     initialPosition = transitionMove.movedPiece.getPieceCoordinate();
                     isFirstMove = transitionMove.movedPiece.isFirstMove();

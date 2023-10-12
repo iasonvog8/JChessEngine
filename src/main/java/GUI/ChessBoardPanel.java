@@ -146,7 +146,7 @@ public class ChessBoardPanel {
                 board.position.setWhiteTurn(!player.isWhitePlayer());
 
                 board.displayBoard();
-            } else setPieces(graphicBoard, board, false);
+            }else setPieces(graphicBoard, board, false);
         }
     }
 
