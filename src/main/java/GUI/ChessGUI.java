@@ -19,14 +19,18 @@ import classics.board.Board;
 import classics.board.ChessBitSet;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 public class ChessGUI extends Application {
     @Override
     public void start(Stage stage)  {
         Board board = new Board();
-        board.buildBoard(ChessBitSet.classicBitSet());
+        //board.buildBoard(ChessBitSet.classicBitSet());
+        ChessBitSet.setFENBitSet(new StringBuilder("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 0"), board);
+
+        GridPane applicationPane = new GridPane();
+        applicationPane.setPrefSize(1000, 1000);
 
         GridPane chessBoard = ChessBoardPanel.createChessBoard(board);
         chessBoard.setMaxHeight(800);
@@ -34,7 +38,12 @@ public class ChessGUI extends Application {
         chessBoard.setMinHeight(800);
         chessBoard.setMinHeight(800);
 
-        Scene scene = new Scene(chessBoard);
+        applicationPane.add(CoordinateLabelPanel.algebraicLabelCoordinate(), 1, 0);
+        applicationPane.add(CoordinateLabelPanel.numericLabelCoordinate(), 0, 1);
+        applicationPane.add(chessBoard, 1, 1);
+
+
+        Scene scene = new Scene(applicationPane);
 
         stage.setResizable(false);
         stage.setScene(scene);

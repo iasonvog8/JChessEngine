@@ -54,10 +54,10 @@ public abstract class Move {
         return destinationCoordinate;
     }
 
-    public static class PrimaryMove extends Move { // or MajorMove
-        public PrimaryMove(final Board board,
-                           final Piece movedPiece,
-                           final int destinationCoordinate) {
+    public static class MajorMove extends Move {
+        public MajorMove(final Board board,
+                         final Piece movedPiece,
+                         final int destinationCoordinate) {
             super(board, movedPiece, destinationCoordinate);
         }
 
@@ -115,14 +115,23 @@ public abstract class Move {
             super(board, movedPiece, destinationCoordinate);
             this.attackedPawn = attackedPawn;
         }
+
+        @Override
+        public String toString() {
+            return "EnPassantMove{" +
+                    "attackedPawn=" + attackedPawn +
+                    ", movedPiece=" + movedPiece +
+                    ", destinationCoordinate=" + destinationCoordinate +
+                    '}';
+        }
     }
     public static class Castling extends Move {
-        public final PrimaryMove rookMove;
+        public final MajorMove rookMove;
 
         public Castling(final Board board,
                         final Piece movedPiece,
                         final int destinationCoordinate,
-                        final PrimaryMove rookMove) {
+                        final MajorMove rookMove) {
             super(board, movedPiece, destinationCoordinate);
             this.rookMove = rookMove;
         }
@@ -139,7 +148,7 @@ public abstract class Move {
         public KingSideCastling(final Board board,
                                 final Piece movedPiece,
                                 final int destinationCoordinate,
-                                final PrimaryMove rookMove) {
+                                final MajorMove rookMove) {
             super(board, movedPiece, destinationCoordinate, rookMove);
         }
 
@@ -172,12 +181,17 @@ public abstract class Move {
 
             return false;
         }
+
+        @Override
+        public String toString() {
+            return "O-O";
+        }
     }
     public static class QueenSideCastling extends Castling {
         public QueenSideCastling(final Board board,
                                 final Piece movedPiece,
                                 final int destinationCoordinate,
-                                final PrimaryMove rookMove) {
+                                final MajorMove rookMove) {
             super(board, movedPiece, destinationCoordinate, rookMove);
         }
 
@@ -210,6 +224,11 @@ public abstract class Move {
 
             return false;
         }
+
+        @Override
+        public String toString() {
+            return "O-O-O";
+        }
     }
     public static class TransitionMove implements KingSafety {
         protected Board transitionBoard;
@@ -222,18 +241,28 @@ public abstract class Move {
         }
 
         public void revokeMove(final Move revokeMove, final Board board, final int initialPosition, final boolean isFirstMove) {
-            board.execute(new PrimaryMove(board, revokeMove.movedPiece, initialPosition));
+            board.execute(new MajorMove(board, revokeMove.movedPiece, initialPosition));
             revokeMove.movedPiece.setFirstMove(isFirstMove);
 
             if (revokeMove instanceof AttackMove) {
                 int revokedAttackedPieceCoordinate = ((AttackMove) revokeMove).attackedPiece.getPieceCoordinate();
-                board.setTile(revokedAttackedPieceCoordinate, new OccupiedTile(revokedAttackedPieceCoordinate, ((AttackMove) revokeMove).attackedPiece));
+                board.setTile(new OccupiedTile(revokedAttackedPieceCoordinate, ((AttackMove) revokeMove).attackedPiece));
             }else if (revokeMove instanceof EnPassantMove) {
                 int revokedAttackedPieceCoordinate = ((EnPassantMove) revokeMove).attackedPawn.getPieceCoordinate();
-                board.setTile(revokedAttackedPieceCoordinate, new OccupiedTile(revokedAttackedPieceCoordinate, ((EnPassantMove) revokeMove).attackedPawn));
-            } else if (revokeMove instanceof PromotionMove) {
-                int promotedPieceCoordinate = ((PromotionMove) revokeMove).promotedPiece.getPieceCoordinate();
-                board.setTile(promotedPieceCoordinate, new EmptyTile(promotedPieceCoordinate));
+
+                board.setTile(new OccupiedTile(revokedAttackedPieceCoordinate, ((EnPassantMove) revokeMove).attackedPawn));
+                board.setEnPassantTarget(revokeMove.destinationCoordinate);
+            }else if (revokeMove instanceof PromotionMove) {
+                board.setTile(new EmptyTile(revokeMove.destinationCoordinate));
+            }else if (revokeMove instanceof QueenSideCastling) {
+                board.execute(new MajorMove(board, ((QueenSideCastling) revokeMove).rookMove.getMovedPiece(),
+                        ((QueenSideCastling) revokeMove).rookMove.getMovedPiece().getAlliance().isWhite() ? 56 : 0));
+                ((Castling) revokeMove).rookMove.getMovedPiece().setFirstMove(true);
+
+            }else if (revokeMove instanceof KingSideCastling) {
+                board.execute(new MajorMove(board, ((KingSideCastling) revokeMove).rookMove.getMovedPiece(),
+                        ((KingSideCastling) revokeMove).rookMove.getMovedPiece().getAlliance().isWhite() ? 63 : 7));
+                ((Castling) revokeMove).rookMove.getMovedPiece().setFirstMove(true);
             }
         }
 

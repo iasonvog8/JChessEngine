@@ -29,7 +29,7 @@ public class Knight extends Piece {
                 isValidTile(destinationCoordinate)) {
 
                 if (!board.getTile(destinationCoordinate).isTileOccupied()) // or ... instanceof EmptyTile
-                    allPossibleLegalMoves.add(new PrimaryMove(board, this, destinationCoordinate));
+                    allPossibleLegalMoves.add(new MajorMove(board, this, destinationCoordinate));
                 if (board.getTile(destinationCoordinate).isTileOccupied()) { // or ... instanceof OccupiedTile
                     if (board.getTile(destinationCoordinate).getPiece().getAlliance() !=
                             board.getTile(pieceCoordinate).getPiece().getAlliance())
@@ -54,5 +54,12 @@ public class Knight extends Piece {
     private boolean isEighthColumnExclusive(final int currentPosition, final int direction) {
         return (EIGHTH[currentPosition] && (direction == 10 ||direction == -6 ||
                 direction == 17 || direction == -15));
+    }
+
+    @Override
+    public String toString() {
+        if (getAlliance().isWhite())
+            return "N";
+        return "n";
     }
 }

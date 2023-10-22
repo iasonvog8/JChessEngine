@@ -1,19 +1,11 @@
 package classics.board;
 
+import classics.move.FENParser;
 import classics.piece.*;
 
 import java.util.ArrayList;
 
-public class ChessBitSet {
-    private final Piece bit;
-
-    public ChessBitSet(Piece bit) {
-        this.bit = bit;
-    }
-
-    public Piece getBit() {
-        return bit;
-    }
+public record ChessBitSet(Piece bit) {
 
     public static ArrayList<ChessBitSet> classicBitSet() {
         ArrayList<ChessBitSet> bitSets = new ArrayList<>();
@@ -55,4 +47,7 @@ public class ChessBitSet {
         return bitSets;
     }
 
+    public static void setFENBitSet(final StringBuilder fenBitSet, final Board board) {
+        FENParser.setBoard(fenBitSet, board);
+    }
 }

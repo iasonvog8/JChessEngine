@@ -18,6 +18,7 @@ package GUI;
 import classics.board.Board;
 import classics.move.Move;
 import classics.move.MoveValidator;
+import classics.piece.Queen;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -46,10 +47,18 @@ public class MoveHighlighter {
         int tileCoordinate;
 
         for (Move markedMove : allPiecePossibleLegalMoves) {
-            if (MoveValidator.isValidMove(markedMove, player, board)) {
-                if (!(markedMove instanceof Move.AttackMove) && !(markedMove instanceof Move.EnPassantMove))
-                    markedTiles.add(markedMove.getDestinationCoordinate());
-                else markedAttackedTiles.add(markedMove.getDestinationCoordinate());
+            if (!(markedMove instanceof Move.PromotionMove)) {
+                if (MoveValidator.isValidMove(markedMove, player, board)) {
+                    if (!(markedMove instanceof Move.AttackMove) && !(markedMove instanceof Move.EnPassantMove))
+                        markedTiles.add(markedMove.getDestinationCoordinate());
+                    else markedAttackedTiles.add(markedMove.getDestinationCoordinate());
+                }
+            } else {
+                ((Move.PromotionMove) markedMove).setPromotedPiece(
+                        new Queen(markedMove.getDestinationCoordinate(), markedMove.getMovedPiece().getAlliance()));
+                System.out.println(markedMove);
+                if (MoveValidator.isValidMove(markedMove, player, board)) markedTiles.add(markedMove.getDestinationCoordinate());
+                ((Move.PromotionMove) markedMove).setPromotedPiece(null);
             }
             if (player.isPlayerOnCheckMate(board) || player.isPlayerInCheck(board))
                 kingCoordinate = player.estimateKingLocation(board).getPieceCoordinate();

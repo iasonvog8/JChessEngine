@@ -35,6 +35,9 @@ public class MoveValidator {
                 MoveGenerator.generateAllBlackPossibleMoves(board);
 
         if (!player.isPlayerInCheck(board)) {
+            if (playerMove instanceof EnPassantMove)
+                System.out.println(playerMove);
+
             if (player.isWhitePlayer() == board.position.isWhiteTurn()) {
                 TransitionMove transitionMove = new TransitionMove(board);
 
@@ -43,6 +46,7 @@ public class MoveValidator {
                     boolean firstMove = legalMove.movedPiece.isFirstMove();
 
                     transitionMove.createMove(legalMove);
+
                     if (legalMove.equals(playerMove) && !transitionMove.isKingInCheck(player.estimateKingLocation(board))) {
                         transitionMove.revokeMove(legalMove, board, initialPosition, firstMove);
                         return true;

@@ -20,6 +20,7 @@
 
 package classics.board;
 
+import classics.move.FENGenerator;
 import classics.move.Move;
 import classics.piece.*;
 import player.BlackPlayer;
@@ -32,52 +33,48 @@ import java.util.HashMap;
 import static classics.board.BoardUtils.*;
 import static classics.board.Tile.*;
 import static classics.move.Move.*;
-import static classics.piece.PieceType.*;
 
 public class Board {
     private final Tile[] chessBoard;
     private final HashMap<Integer, Piece> chessBoardPieces = new HashMap<>();
     public WhitePlayer whitePlayer;
     public BlackPlayer blackPlayer;
+    public FENGenerator fenGenerator;
     public Position position;
     private int enPassantTarget = 0;
     public Board() {
         chessBoard = new Tile[BOARD_LENGTH];
         whitePlayer = new WhitePlayer();
         blackPlayer = new BlackPlayer();
-        position = new Position(this);
+        fenGenerator = new FENGenerator();
+        position = new Position();
     }
 
-    private void initBoard() {
+    public void initBoard() {
         for (int t = 0; t < BOARD_LENGTH; t++)
-            setTile(t, new EmptyTile(t));
+            setTile(new EmptyTile(t));
     }
 
     public void buildBoard(final ArrayList<ChessBitSet> bitSet) {
         initBoard();
         for (ChessBitSet bit : bitSet) {
-            chessBoard[bit.getBit().getPieceCoordinate()] = new OccupiedTile(bit.getBit().getPieceCoordinate(), bit.getBit());
-            chessBoardPieces.put(bit.getBit().getPieceCoordinate(), bit.getBit());
+            chessBoard[bit.bit().getPieceCoordinate()] = new OccupiedTile(bit.bit().getPieceCoordinate(), bit.bit());
+            chessBoardPieces.put(bit.bit().getPieceCoordinate(), bit.bit());
         }
+        fenGenerator.translateBoard(this);
     }
 
     public void execute(final Move move) {
         Piece commutedPiece = move.getMovedPiece();
-        setEnPassantTarget(-1);
 
-        if (move instanceof PrimaryMove || move instanceof AttackMove) {
+        if (move instanceof MajorMove || move instanceof AttackMove) {
             final int locationCoordinate = commutedPiece.getPieceCoordinate();
-            final boolean[] enPassantRow = commutedPiece.getAlliance().isWhite() ? FIFTH_ROW : FOURTH_ROW;
-
-            if (commutedPiece.getPieceType() == PAWN &&
-                    commutedPiece.isFirstMove() && enPassantRow[move.getDestinationCoordinate()])
-                setEnPassantTarget(move.getDestinationCoordinate() + (commutedPiece.getAlliance().isWhite() ? 8 : -8));
 
             if (commutedPiece.isFirstMove())
                 commutedPiece.setFirstMove(false);
 
-            setTile(locationCoordinate, new EmptyTile(locationCoordinate));
-            setTile(move.getDestinationCoordinate(), new OccupiedTile(move.getDestinationCoordinate(), commutedPiece));
+            setTile(new EmptyTile(locationCoordinate));
+            setTile(new OccupiedTile(move.getDestinationCoordinate(), commutedPiece));
 
             commutedPiece.setPieceCoordinate(move.getDestinationCoordinate());
         }
@@ -85,8 +82,8 @@ public class Board {
             final int promotedPieceCoordinate = move.getDestinationCoordinate();
             final int promotedPawnCoordinate = commutedPiece.getPieceCoordinate();
 
-            setTile(promotedPawnCoordinate, new EmptyTile(promotedPawnCoordinate));
-            setTile(promotedPieceCoordinate, new OccupiedTile(promotedPieceCoordinate, ((PromotionMove) move).promotedPiece));
+            setTile(new EmptyTile(promotedPawnCoordinate));
+            setTile(new OccupiedTile(promotedPieceCoordinate, ((PromotionMove) move).promotedPiece));
         }
         else if (move instanceof KingSideCastling || move instanceof QueenSideCastling) {
             int locationCoordinate = commutedPiece.getPieceCoordinate();
@@ -96,28 +93,30 @@ public class Board {
             execute(((Castling) move).rookMove);
             commutedPiece.setPieceCoordinate(move.getDestinationCoordinate());
 
-            setTile(move.getDestinationCoordinate(), new OccupiedTile(move.getDestinationCoordinate(), commutedPiece));
-            setTile(locationCoordinate, new EmptyTile(locationCoordinate));
+            setTile(new OccupiedTile(move.getDestinationCoordinate(), commutedPiece));
+            setTile(new EmptyTile(locationCoordinate));
         }
         else if (move instanceof EnPassantMove) {
             int attackedPawnCoordinate = ((EnPassantMove) move).attackedPawn.getPieceCoordinate();
 
-            setTile(commutedPiece.getPieceCoordinate(), new EmptyTile(commutedPiece.getPieceCoordinate()));
+            setTile(new EmptyTile(commutedPiece.getPieceCoordinate()));
 
             commutedPiece.setPieceCoordinate(move.getDestinationCoordinate());
 
-            setTile(commutedPiece.getPieceCoordinate(), new OccupiedTile(move.getDestinationCoordinate(), commutedPiece));
-            setTile(attackedPawnCoordinate, new EmptyTile(attackedPawnCoordinate));
+            setTile(new OccupiedTile(move.getDestinationCoordinate(), commutedPiece));
+            setTile(new EmptyTile(attackedPawnCoordinate));
+
+            setEnPassantTarget(-1);
         }
     }
 
-    public void setTile(final int tileCoordinate, final Tile tile) {
-        chessBoard[tileCoordinate] = tile;
+    public void setTile(final Tile tile) {
+        chessBoard[tile.coordinate] = tile;
 
         if (tile instanceof EmptyTile)
-            chessBoardPieces.remove(tileCoordinate);
+            chessBoardPieces.remove(tile.coordinate);
         else if (tile instanceof OccupiedTile)
-            chessBoardPieces.put(tileCoordinate, tile.getPiece());
+            chessBoardPieces.put(tile.coordinate, tile.getPiece());
     }
 
     public void setEnPassantTarget(int enPassantTarget) {
@@ -147,8 +146,11 @@ public class Board {
 
         for (Piece blackPiece : chessBoardPieces.values())
             if (!blackPiece.getAlliance().isWhite()) boardPieces.add(blackPiece);
-
         return boardPieces;
+    }
+
+    public Tile[] getChessBoard() {
+        return chessBoard;
     }
 
     public int getEnPassantTarget() {

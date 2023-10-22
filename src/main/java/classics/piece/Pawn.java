@@ -28,13 +28,13 @@ public class Pawn extends Piece {
 
             if (directionOffSet == 8 && isValidTile(destinationCoordinate) && !board.getTile(destinationCoordinate).isTileOccupied()) {
                 if (promotionRow[destinationCoordinate])
-                    allPossibleLegalMoves.add(new PromotionMove(board, this, destinationCoordinate, null));
-                else allPossibleLegalMoves.add(new PrimaryMove(board, this, destinationCoordinate));
+                    allPossibleLegalMoves.add(new PromotionMove(board, this, destinationCoordinate, new Queen(destinationCoordinate, this.alliance))); // put random piece because it will be removed later
+                else allPossibleLegalMoves.add(new MajorMove(board, this, destinationCoordinate));
 
             }else if (directionOffSet == 16 && isValidTile(destinationCoordinate) && isFirstMove() &&
                     !board.getTile(destinationCoordinate).isTileOccupied() &&
                     !board.getTile(destinationCoordinate + behindTile).isTileOccupied())
-                allPossibleLegalMoves.add(new PrimaryMove(board, this, destinationCoordinate));
+                allPossibleLegalMoves.add(new MajorMove(board, this, destinationCoordinate));
             //left
             else if ((directionOffSet * verticalDirectionOffSet == 7 || directionOffSet * verticalDirectionOffSet == -9) &&
                     isValidTile(destinationCoordinate) && !FIRST_COLUMN[pieceCoordinate]) {
@@ -43,9 +43,10 @@ public class Pawn extends Piece {
                     allPossibleLegalMoves.add(new AttackMove(board, this, destinationCoordinate,
                             board.getTile(destinationCoordinate).getPiece()));
                 //en passant
-                else if (destinationCoordinate == board.getEnPassantTarget() && board.getTile(board.getEnPassantTarget() + enPassantPawn).getPiece() != null &&
-                        Objects.requireNonNull(board.getTile(board.getEnPassantTarget() + enPassantPawn)).getPiece().getAlliance().isWhite() != this.getAlliance().isWhite())
-                    allPossibleLegalMoves.add(new EnPassantMove(board, this, destinationCoordinate,
+                if (destinationCoordinate == board.getEnPassantTarget() && board.getTile(board.getEnPassantTarget() + enPassantPawn).getPiece() != null &&
+                        Objects.requireNonNull(board.getTile(board.getEnPassantTarget() + enPassantPawn)).getPiece().getAlliance().isWhite() != this.getAlliance().isWhite() &&
+                        Objects.requireNonNull(board.getTile(board.getEnPassantTarget() + enPassantPawn)).getPiece().getPieceType() == PieceType.PAWN)
+                    allPossibleLegalMoves.add(new EnPassantMove(board, this, board.getEnPassantTarget(),
                             board.getTile(pieceCoordinate - 1).getPiece()));
             }
             //right
@@ -56,13 +57,21 @@ public class Pawn extends Piece {
                     allPossibleLegalMoves.add(new AttackMove(board, this, destinationCoordinate,
                             board.getTile(destinationCoordinate).getPiece()));
                 //en passant
-                else if (destinationCoordinate == board.getEnPassantTarget() && board.getTile(board.getEnPassantTarget() + enPassantPawn).getPiece() != null &&
-                        Objects.requireNonNull(board.getTile(board.getEnPassantTarget() + enPassantPawn)).getPiece().getAlliance() != getAlliance())
-                    allPossibleLegalMoves.add(new EnPassantMove(board, this, destinationCoordinate,
+                if (destinationCoordinate == board.getEnPassantTarget() && board.getTile(board.getEnPassantTarget() + enPassantPawn).getPiece() != null &&
+                        Objects.requireNonNull(board.getTile(board.getEnPassantTarget() + enPassantPawn)).getPiece().getAlliance() != getAlliance() &&
+                        Objects.requireNonNull(board.getTile(board.getEnPassantTarget() + enPassantPawn)).getPiece().getPieceType() == PieceType.PAWN)
+                    allPossibleLegalMoves.add(new EnPassantMove(board, this, board.getEnPassantTarget(),
                             board.getTile(pieceCoordinate + 1).getPiece()));
             }
         }
 
         return allPossibleLegalMoves;
+    }
+
+    @Override
+    public String toString() {
+        if (getAlliance().isWhite())
+            return "P";
+        return "p";
     }
 }

@@ -19,6 +19,7 @@ import classics.board.Board;
 import classics.board.BoardUtils;
 import classics.board.Tile;
 import classics.move.Move;
+import classics.move.MoveNotationGenerator;
 import classics.move.MoveValidator;
 import classics.piece.Alliance;
 import classics.piece.Piece;
@@ -32,11 +33,14 @@ import player.Player;
 
 import java.util.Objects;
 
+import static classics.board.BoardUtils.FIFTH_ROW;
+import static classics.board.BoardUtils.FOURTH_ROW;
 import static classics.move.Move.*;
 import static classics.move.Move.KingSideCastling.*;
 import static classics.move.Move.QueenSideCastling.*;
 import static classics.piece.Alliance.*;
 import static GUI.MoveHighlighter.*;
+import static classics.piece.PieceType.PAWN;
 
 public class ChessBoardPanel {
     private static int selectedPiecePosition = -1;
@@ -140,10 +144,33 @@ public class ChessBoardPanel {
         if (selectedDestinationCoordinate != -1 && selectedPiecePosition != -1) {
             Move playerMove = calculateMoveType(board, selectedPiecePosition, selectedDestinationCoordinate);
 
+            assert playerMove != null;
+            final boolean[] enPassantRow = playerMove.getMovedPiece().getAlliance().isWhite() ? FIFTH_ROW : FOURTH_ROW;
+
             if (MoveValidator.isValidMove(playerMove, player, board)) {
+                if (playerMove.getMovedPiece().getPieceType() == PAWN &&
+                        playerMove.getMovedPiece().getAlliance().isWhite() == player.isWhitePlayer() &&
+                        playerMove.getMovedPiece().isFirstMove() && enPassantRow[playerMove.getDestinationCoordinate()])
+                    board.setEnPassantTarget(playerMove.getDestinationCoordinate() + (playerMove.getMovedPiece().getAlliance().isWhite() ? 8 : -8));
+                else board.setEnPassantTarget(-1);
+
+                if ((playerMove instanceof PromotionMove)
+                   || (playerMove instanceof EnPassantMove)
+                   || (playerMove instanceof AttackMove)) {
+                    board.position.setFullMove(0);
+                    board.position.setHalfMove(0);
+                } else {
+                    board.position.setHalfMove(board.position.getHalfMove() + 1);
+                    if (board.position.getHalfMove() % 2 == 0) board.position.setFullMove(board.position.getFullMove() + 1);
+                }
+                System.out.println(MoveNotationGenerator.translateMoveToAlgebraic(playerMove));
+
                 board.execute(Objects.requireNonNull(playerMove));
                 setPieces(graphicBoard, board, false);
                 board.position.setWhiteTurn(!player.isWhitePlayer());
+
+                board.fenGenerator.translateBoard(board);
+                System.out.println(board.fenGenerator.getFEN());
 
                 board.displayBoard();
             }else setPieces(graphicBoard, board, false);
@@ -171,28 +198,28 @@ public class ChessBoardPanel {
             promotionMove.setPromotedPiece(PromotionDialog.getPromotedPiece());
             return promotionMove;
         }
+
         if (destinationTile.isTileOccupied())
             return new AttackMove(board, selectedPiece, destinationPosition, destinationTile.getPiece());
 
         if (!destinationTile.isTileOccupied()) {
-            if (selectedPiece.getPieceType() == PieceType.PAWN && destinationPosition == enPassantTarget)
+            if (selectedPiece.getPieceType() == PieceType.PAWN && destinationPosition == board.getEnPassantTarget())
                 return new EnPassantMove(board, selectedPiece, destinationPosition, board.getTile(behindTile).getPiece());
 
             if (selectedPiece.getPieceType() == PieceType.KING && selectedPiece.isFirstMove()) {
                 if (isThereKingSideRook(board, selectedPiece.getAlliance()) && isAvailableKingCorridor(board, selectedPiece.getAlliance())) {
                     if (Objects.requireNonNull(getKingSideRook(board, selectedPiece.getAlliance())).isFirstMove() && destinationPosition == kingSideCastlingCoordinate - 1)
                         return new KingSideCastling(board, player.estimateKingLocation(board), kingSideCastlingCoordinate - 1,
-                                new PrimaryMove(board, getKingSideRook(board, selectedPiece.getAlliance()), kingSideCastlingCoordinate - 2));
+                                new MajorMove(board, getKingSideRook(board, selectedPiece.getAlliance()), kingSideCastlingCoordinate - 2));
                 }
                 if (isThereQueenSideRook(board, selectedPiece.getAlliance()) && isAvailableQueenCorridor(board, selectedPiece.getAlliance())) {
                     if (Objects.requireNonNull(getQueenSideRook(board, selectedPiece.getAlliance())).isFirstMove() && destinationPosition == queenSideCastlingCoordinate + 2)
                         return new QueenSideCastling(board, player.estimateKingLocation(board), queenSideCastlingCoordinate + 2,
-                                new PrimaryMove(board, getQueenSideRook(board, selectedPiece.getAlliance()), queenSideCastlingCoordinate + 3));
+                                new MajorMove(board, getQueenSideRook(board, selectedPiece.getAlliance()), queenSideCastlingCoordinate + 3));
                 }
             }
-            return new PrimaryMove(board, selectedPiece, destinationPosition);
+            return new MajorMove(board, selectedPiece, destinationPosition);
         }
-
         return null;
     }
 

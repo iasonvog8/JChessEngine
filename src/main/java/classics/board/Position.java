@@ -21,25 +21,14 @@
 package classics.board;
 
 public class Position {
-    private Board gamePosition;
     private boolean isWhiteTurn;
     private int halfMove;
     private int fullMove;
-    public Position(final Board board) {
-        this.gamePosition = board;
+    public Position() {
         this.isWhiteTurn = true;
         this.halfMove = 0;
         this.fullMove = 0;
     }
-
-    public Board getGamePosition() {
-        return gamePosition;
-    }
-
-    public void setGamePosition(Board gamePosition) {
-        this.gamePosition = gamePosition;
-    }
-
     public boolean isWhiteTurn() {
         return isWhiteTurn;
     }

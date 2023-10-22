@@ -82,10 +82,4 @@ public abstract class Piece implements Cloneable {
                throw new RuntimeException(e);
           }
      }
-
-     @Override
-     public String toString() {
-          return "Piece Location: " + pieceCoordinate + " Alliance: " + alliance +
-                  " PieceType: " + pieceType;
-     }
 }

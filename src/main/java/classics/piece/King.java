@@ -34,7 +34,7 @@ public class King extends Piece {
                 isValidTile(destinationCoordinate)) {
 
                 if (!board.getTile(destinationCoordinate).isTileOccupied()) {
-                    move = new PrimaryMove(board, this, destinationCoordinate);
+                    move = new MajorMove(board, this, destinationCoordinate);
 
                     if (isSafeKing(board, move, isFirstMove, pieceCoordinate))
                         allPossibleLegalMoves.add(move);
@@ -55,18 +55,18 @@ public class King extends Piece {
         TransitionMove transitionMove = new TransitionMove(board);
         if (isThereKingSideRook(board, getAlliance()) && isAvailableKingCorridor(board, getAlliance()) && !transitionMove.isKingInCheck(this)) {
             if (Objects.requireNonNull(getKingSideRook(board, getAlliance())).isFirstMove() && this.isFirstMove()) {
-                if (isSafeKing(board, new PrimaryMove(board, this, kingSideCastlingCoordinate - 1), isFirstMove, pieceCoordinate))
+                if (isSafeKing(board, new MajorMove(board, this, kingSideCastlingCoordinate - 1), isFirstMove, pieceCoordinate))
                     allPossibleLegalMoves.add(new KingSideCastling(board, this, kingSideCastlingCoordinate - 1,
-                        new PrimaryMove(board, getKingSideRook(board, getAlliance()), kingSideCastlingCoordinate - 2)));
+                        new MajorMove(board, getKingSideRook(board, getAlliance()), kingSideCastlingCoordinate - 2)));
             }
 
         }
         transitionMove = new TransitionMove(board);
         if (isThereQueenSideRook(board, getAlliance()) && isAvailableQueenCorridor(board, getAlliance()) && !transitionMove.isKingInCheck(this)) {
             if (Objects.requireNonNull(getQueenSideRook(board, getAlliance())).isFirstMove() && this.isFirstMove()) {
-                if (isSafeKing(board, new PrimaryMove(board, this, queenSideCastlingCoordinate + 2), isFirstMove, pieceCoordinate))
+                if (isSafeKing(board, new MajorMove(board, this, queenSideCastlingCoordinate + 2), isFirstMove, pieceCoordinate))
                     allPossibleLegalMoves.add(new QueenSideCastling(board, this, queenSideCastlingCoordinate + 2,
-                        new PrimaryMove(board, getQueenSideRook(board, getAlliance()), queenSideCastlingCoordinate + 3)));
+                        new MajorMove(board, getQueenSideRook(board, getAlliance()), queenSideCastlingCoordinate + 3)));
             }
         }
 
@@ -89,5 +89,12 @@ public class King extends Piece {
     }
     private boolean isNotEighthColumnExclusive(final int currentPosition, final int direction) {
         return (!EIGHTH[currentPosition] || direction != 9 && direction != -7 && direction != 1);
+    }
+
+    @Override
+    public String toString() {
+        if (getAlliance().isWhite())
+            return "K";
+        return "k";
     }
 }

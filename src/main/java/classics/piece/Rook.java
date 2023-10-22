@@ -28,7 +28,7 @@ public class Rook extends Piece {
                 if (!isValidTile(destinationCoordinate))
                     break;
                 if (!board.getTile(destinationCoordinate).isTileOccupied())
-                    allPossibleLegalMoves.add(new PrimaryMove(board, this, destinationCoordinate));
+                    allPossibleLegalMoves.add(new MajorMove(board, this, destinationCoordinate));
                 if (board.getTile(destinationCoordinate).isTileOccupied()) {
                     if (board.getTile(destinationCoordinate).getPiece().getAlliance() !=
                             board.getTile(pieceCoordinate).getPiece().getAlliance())
@@ -46,5 +46,12 @@ public class Rook extends Piece {
     }
     private boolean isNotEighthColumnExclusive(final int currentPosition, final int direction) {
         return (!EIGHTH[currentPosition] || direction != 1);
+    }
+
+    @Override
+    public String toString() {
+        if (getAlliance().isWhite())
+            return "R";
+        return "r";
     }
 }
