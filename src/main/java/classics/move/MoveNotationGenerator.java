@@ -36,40 +36,38 @@ public class MoveNotationGenerator {
     };
 
     public static String translateMoveToAlgebraic(Move algebraicMove) {
-        if ((algebraicMove instanceof QueenSideCastling) ||
-                (algebraicMove instanceof KingSideCastling))
-            return algebraicMove.toString();
-
         final StringBuilder algebraicNotation = new StringBuilder();
 
-        if (!(algebraicMove instanceof PromotionMove)) {
+        if ((algebraicMove instanceof QueenSideCastling) ||
+                (algebraicMove instanceof KingSideCastling))
+            algebraicNotation.append(algebraicMove);
+        else if (!(algebraicMove instanceof PromotionMove)) {
             algebraicNotation.append(pieceAbbreviations(algebraicMove.getMovedPiece()));
             if (algebraicMove instanceof AttackMove || algebraicMove instanceof EnPassantMove)
                 algebraicNotation.append("x");
             algebraicNotation.append(algebraicArray[algebraicMove.getDestinationCoordinate()]);
+        }else
+            algebraicNotation.append(algebraicArray[algebraicMove.destinationCoordinate]).
+                    append(pieceAbbreviations(((PromotionMove) algebraicMove).promotedPiece));
 
-            TransitionMove transitionMove = new TransitionMove(algebraicMove.board);
-            final King king = algebraicMove.movedPiece.getAlliance().isWhite() ?
-                    algebraicMove.board.whitePlayer.estimateKingLocation(algebraicMove.board) :
-                    algebraicMove.board.blackPlayer.estimateKingLocation(algebraicMove.board) ;
-            final int initialPosition = algebraicMove.movedPiece.getPieceCoordinate();
-            final boolean firstMove = algebraicMove.movedPiece.isFirstMove();
+        TransitionMove transitionMove = new TransitionMove(algebraicMove.board);
+        final King king = algebraicMove.movedPiece.getAlliance().isWhite() ?
+                algebraicMove.board.blackPlayer.estimateKingLocation(algebraicMove.board) :
+                algebraicMove.board.whitePlayer.estimateKingLocation(algebraicMove.board) ;
+        final int initialPosition = algebraicMove.movedPiece.getPieceCoordinate();
+        final boolean firstMove = algebraicMove.movedPiece.isFirstMove();
 
-            transitionMove.createMove(algebraicMove);
-            if (transitionMove.isDone(algebraicMove.board, king)){
-                transitionMove.revokeMove(algebraicMove, algebraicMove.board, initialPosition, firstMove);
-                return algebraicNotation.append("#").toString();
-            }
-            if (transitionMove.isKingInCheck(king)) {
-                transitionMove.revokeMove(algebraicMove, algebraicMove.board, initialPosition, firstMove);
-                return algebraicNotation.append("+").toString();
-            }
+        transitionMove.createMove(algebraicMove);
+        if (transitionMove.isDone(algebraicMove.board, king)){
             transitionMove.revokeMove(algebraicMove, algebraicMove.board, initialPosition, firstMove);
-            return algebraicNotation.toString();
+            return algebraicNotation.append("#").toString();
         }
-
-        return algebraicNotation.append(algebraicArray[algebraicMove.destinationCoordinate]).
-            append(pieceAbbreviations(((PromotionMove) algebraicMove).promotedPiece)).toString();
+        if (transitionMove.isKingInCheck(king)) {
+            transitionMove.revokeMove(algebraicMove, algebraicMove.board, initialPosition, firstMove);
+            return algebraicNotation.append("+").toString();
+        }
+        transitionMove.revokeMove(algebraicMove, algebraicMove.board, initialPosition, firstMove);
+        return algebraicNotation.toString();
     }
 
     public static String getSquareAlgebraic(final int square) {

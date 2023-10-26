@@ -18,8 +18,10 @@ package GUI;
 import classics.board.Board;
 import classics.board.ChessBitSet;
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class ChessGUI extends Application {
@@ -29,8 +31,8 @@ public class ChessGUI extends Application {
         //board.buildBoard(ChessBitSet.classicBitSet());
         ChessBitSet.setFENBitSet(new StringBuilder("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 0"), board);
 
-        GridPane applicationPane = new GridPane();
-        applicationPane.setPrefSize(1000, 1000);
+        HBox applicationPane = new HBox();
+        applicationPane.setPrefSize(1100, 900);
 
         GridPane chessBoard = ChessBoardPanel.createChessBoard(board);
         chessBoard.setMaxHeight(800);
@@ -38,14 +40,23 @@ public class ChessGUI extends Application {
         chessBoard.setMinHeight(800);
         chessBoard.setMinHeight(800);
 
-        applicationPane.add(CoordinateLabelPanel.algebraicLabelCoordinate(), 1, 0);
-        applicationPane.add(CoordinateLabelPanel.numericLabelCoordinate(), 0, 1);
-        applicationPane.add(chessBoard, 1, 1);
+        StackPane chessBoardWood = new StackPane();
+        chessBoardWood.getChildren().addAll(CoordinateLabelPanel.algebraicLabelCoordinate(), CoordinateLabelPanel.numericLabelCoordinate(), chessBoard);
+        chessBoardWood.setPrefSize(900, 900);
 
+        final Color woodColor = Color.rgb(121, 58, 58, 0.80);
+        final BackgroundFill backgroundFill = new BackgroundFill(woodColor, CornerRadii.EMPTY, Insets.EMPTY);
+        final Background background = new Background(backgroundFill);
+        chessBoardWood.setBackground(background);
+
+        VBox gameInformationPanel = new VBox();
+
+        applicationPane.getChildren().addAll(chessBoardWood, MoveHistoryPanel.gameHistory());
 
         Scene scene = new Scene(applicationPane);
 
-        stage.setResizable(false);
+        stage.setMinHeight(900);
+        stage.setMinWidth(900);
         stage.setScene(scene);
         stage.setTitle("JChess Engine");
         stage.show();

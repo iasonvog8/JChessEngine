@@ -15,5 +15,5 @@
 
 package GUI;
 
-public class TooltipPanel {
+public class TooltipDialog {
 }

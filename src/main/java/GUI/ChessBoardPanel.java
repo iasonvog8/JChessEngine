@@ -18,8 +18,8 @@ package GUI;
 import classics.board.Board;
 import classics.board.BoardUtils;
 import classics.board.Tile;
+import classics.game.GameHistory;
 import classics.move.Move;
-import classics.move.MoveNotationGenerator;
 import classics.move.MoveValidator;
 import classics.piece.Alliance;
 import classics.piece.Piece;
@@ -74,8 +74,18 @@ public class ChessBoardPanel {
                     setPieces(chessBoardPanel, board, true);
                 } else if (selectedPiecePosition >= 0 && clickedRow * 8 + clickedColumn != selectedPiecePosition){
                     selectedDestinationCoordinate = clickedRow * 8 + clickedColumn;
-                    executeMove(board, chessBoardPanel, player);
-                    resetSelectedTiles();
+
+                    if (board.getTile(selectedDestinationCoordinate).isTileOccupied() &&
+                        board.getTile(selectedDestinationCoordinate).getPiece().getAlliance().isWhite() == player.isWhitePlayer()) {
+                        selectedPiecePosition = selectedDestinationCoordinate;
+                        selectedDestinationCoordinate = -1;
+
+                        markAllLegalSquares(selectedPiecePosition, board.getTile(selectedPiecePosition).getPiece().calculateLegalSquares(board), chessBoardPanel, player, board);
+                        setPieces(chessBoardPanel, board, true);
+                    } else {
+                        executeMove(board, chessBoardPanel, player);
+                        resetSelectedTiles();
+                    }
                 }else {
                     resetSelectedTiles();
                     setPieces(chessBoardPanel, board, false);
@@ -163,16 +173,18 @@ public class ChessBoardPanel {
                     board.position.setHalfMove(board.position.getHalfMove() + 1);
                     if (board.position.getHalfMove() % 2 == 0) board.position.setFullMove(board.position.getFullMove() + 1);
                 }
-                System.out.println(MoveNotationGenerator.translateMoveToAlgebraic(playerMove));
+                GameHistory.addMoveToHistory(playerMove);
 
                 board.execute(Objects.requireNonNull(playerMove));
                 setPieces(graphicBoard, board, false);
                 board.position.setWhiteTurn(!player.isWhitePlayer());
 
+                MoveHistoryPanel.addMove(GameHistory.getGameHistory());
+
                 board.fenGenerator.translateBoard(board);
                 System.out.println(board.fenGenerator.getFEN());
 
-                board.displayBoard();
+                //board.displayBoard();
             }else setPieces(graphicBoard, board, false);
         }
     }
